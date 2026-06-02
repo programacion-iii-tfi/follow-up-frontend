@@ -1,6 +1,6 @@
 # FollowUp - Frontend (Android) 📱
 
-Bienvenido al directorio del frontend de **EduManage**, la plataforma móvil de gestión institucional. 
+Bienvenido al directorio del frontend de **FollowUp**, la plataforma móvil de gestión institucional. 
 
 Este proyecto está construido de forma nativa para Android utilizando un enfoque declarativo moderno y una arquitectura estructurada para facilitar el trabajo en equipo y la escalabilidad de los módulos (Auth, Docente, Alumno y Admin).
 
