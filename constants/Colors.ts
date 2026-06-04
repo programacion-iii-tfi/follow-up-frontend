@@ -1,13 +1,17 @@
-/**
- * Material Design 3 Institutional Colors for FollowUp
- */
 export const Colors = {
-  primary: '#6750A4',     // Morado principal
-  secondary: '#625B71',   // Textos secundarios
-  neutral: '#1C1B1F',     // Textos fuertes
-  background: '#FDFBFF',  // Fondo base
-  surface: '#F4F3F7',     // Fondo de tarjetas
-  border: '#CAC4D0',      // Bordes
+  primary: '#6750A4',
+  secondary: '#625B71',
+  tertiary: '#7D5260',
+  neutral: '#1C1B1F',
+  background: '#FDFBFF',
+  surface: '#F4F3F7',
+  surfaceVariant: '#E7E0EC',
+  border: '#CAC4D0',
+  outline: '#79747E',
+  white: '#FFFFFF',
+  error: '#B3261E',
+  onPrimary: '#FFFFFF',
+  onSurface: '#1C1B1F',
 };
 
 export default Colors;
