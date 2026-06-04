@@ -80,7 +80,7 @@ follow-up-frontend/
 └── app.json         # Configuración global de Expo
 ```
 
-##🤝 Flujo de Trabajo (Git Flow)
+## 🤝 Flujo de Trabajo (Git Flow)
 Para mantener el código estable y evitar conflictos, nos manejamos con estas reglas:
 
 main: Solo código estable y de producción. (No programamos acá).
