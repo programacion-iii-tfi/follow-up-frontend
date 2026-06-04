@@ -79,3 +79,20 @@ follow-up-frontend/
 ├── App.js           # Punto de entrada de la aplicación
 └── app.json         # Configuración global de Expo
 ```
+
+##🤝 Flujo de Trabajo (Git Flow)
+Para mantener el código estable y evitar conflictos, nos manejamos con estas reglas:
+
+main: Solo código estable y de producción. (No programamos acá).
+
+develop: Rama principal de desarrollo. Todo nuestro código se unirá acá.
+
+Commits Convencionales:
+
+feat: Para agregar una nueva pantalla o funcionalidad.
+
+ui: Para avances de maquetación y diseño.
+
+fix: Para solucionar errores o bugs.
+
+docs: Para actualizar este README o documentación.
