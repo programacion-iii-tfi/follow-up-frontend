@@ -2,7 +2,8 @@ import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CustomInput } from '@/components/CustomInput';
 import { OutlinedButton } from '@/components/OutlinedButton';
