@@ -32,6 +32,38 @@ Seleccionamos tecnologías modernas que nos permiten iterar rápido y mantener u
 
 ---
 
+## 🚀 Instalación
+
+Sigue estos pasos para ejecutar el proyecto localmente:
+
+1. Clona este repositorio:
+
+```bash
+git clone https://github.com/tu-usuario/follow-up-frontend.git
+cd follow-up-frontend
+```
+
+2. Instala las dependencias:
+
+```bash
+npm install
+```
+
+3. Inicia la aplicación con Expo:
+
+```bash
+npm start
+```
+
+4. Abre la app en tu dispositivo o emulador:
+
+- Escanea el código QR con Expo Go
+- O presiona `a` para Android / `i` para iOS en la terminal
+
+> Asegúrate de tener instalado Node.js, npm y Expo CLI si prefieres usar la línea de comandos directamente.
+
+---
+
 ## 🏗️ Arquitectura del Frontend
 
 El proyecto sigue una estructura modular para mantener la escalabilidad. Todo el código de desarrollo vivirá dentro del directorio `src/`:
@@ -47,3 +79,20 @@ follow-up-frontend/
 ├── App.js           # Punto de entrada de la aplicación
 └── app.json         # Configuración global de Expo
 ```
+
+##🤝 Flujo de Trabajo (Git Flow)
+Para mantener el código estable y evitar conflictos, nos manejamos con estas reglas:
+
+main: Solo código estable y de producción. (No programamos acá).
+
+develop: Rama principal de desarrollo. Todo nuestro código se unirá acá.
+
+Commits Convencionales:
+
+feat: Para agregar una nueva pantalla o funcionalidad.
+
+ui: Para avances de maquetación y diseño.
+
+fix: Para solucionar errores o bugs.
+
+docs: Para actualizar este README o documentación.
