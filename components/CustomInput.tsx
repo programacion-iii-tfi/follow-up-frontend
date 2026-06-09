@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Text, TouchableOpacity, TextInputProps } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 
 interface CustomInputProps extends TextInputProps {
   label: string;
@@ -21,10 +21,10 @@ export const CustomInput = ({ label, iconName, isPassword = false, ...props }: C
         </Text>
       </View>
       <View style={[styles.inputContainer, { borderColor: isFocused ? Colors.primary : Colors.border }]}>
-        <MaterialIcons 
-          name={iconName} 
-          size={22} 
-          color={isFocused ? Colors.primary : Colors.secondary} 
+        <MaterialIcons
+          name={iconName}
+          size={22}
+          color={isFocused ? Colors.primary : Colors.secondary}
           style={styles.icon}
         />
         <TextInput
@@ -37,7 +37,11 @@ export const CustomInput = ({ label, iconName, isPassword = false, ...props }: C
         />
         {isPassword && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-            <Text style={styles.showHideText}>{isPasswordVisible ? 'Hide' : 'Show'}</Text>
+            <MaterialIcons
+              name={isPasswordVisible ? 'visibility-off' : 'visibility'}
+              size={22}
+              color={Colors.secondary}
+            />
           </TouchableOpacity>
         )}
       </View>

@@ -2,13 +2,16 @@ import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CustomInput } from '@/components/CustomInput';
 import { OutlinedButton } from '@/components/OutlinedButton';
 import { PrimaryButton } from '@/components/PrimaryButton';
+import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -60,7 +63,7 @@ export default function LoginScreen() {
             </View>
           </View>
           <View style={styles.registerContainer}>
-            <OutlinedButton title="Registrarse" onPress={() => console.log('Ir a Registro')} />
+            <OutlinedButton title="Registrarse" onPress={() => router.push('/register')} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
