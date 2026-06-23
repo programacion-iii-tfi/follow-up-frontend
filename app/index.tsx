@@ -1,14 +1,13 @@
 import { Colors } from '@/constants/Colors';
+import { CustomInput } from '@/components/atoms/CustomInput';
+import { OutlinedButton } from '@/components/atoms/OutlinedButton';
+import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { CustomInput } from '@/components/CustomInput';
-import { OutlinedButton } from '@/components/OutlinedButton';
-import { PrimaryButton } from '@/components/PrimaryButton';
-import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -53,7 +52,7 @@ export default function LoginScreen() {
             <View style={styles.accederRow}>
               <PrimaryButton
                 title="Acceder"
-                onPress={() => console.log('Acceder', { email, password })}
+                onPress={() => router.push('/(tutor)')}
                 style={styles.accederButton}
               />
             </View>
@@ -72,17 +71,69 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: Colors.background },
-  keyboardView: { flex: 1 },
-  scrollContent: { flexGrow: 1, padding: 24, justifyContent: 'center' },
-  logoContainer: { alignItems: 'center', justifyContent: 'center', height: 180, marginBottom: 32 },
-  logoImage: { width: '100%', height: '100%' },
-  card: { backgroundColor: Colors.surface, borderRadius: 16, padding: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
-  title: { fontSize: 24, fontWeight: '700', color: Colors.neutral, marginBottom: 4 },
-  subtitle: { fontSize: 14, color: Colors.secondary, marginBottom: 24 },
-  accederRow: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 8 },
-  accederButton: { minWidth: 120 },
-  forgotPasswordContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 24, gap: 8 },
-  forgotPasswordText: { color: Colors.primary, fontWeight: '600', fontSize: 14 },
-  registerContainer: { marginTop: 24 }
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 24,
+    justifyContent: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 180,
+    marginBottom: 32,
+  },
+  logoImage: {
+    width: '100%',
+    height: '100%',
+  },
+  card: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.neutral,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: Colors.secondary,
+    marginBottom: 24,
+  },
+  accederRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 8,
+  },
+  accederButton: {
+    minWidth: 120,
+  },
+  forgotPasswordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 24,
+    gap: 8,
+  },
+  forgotPasswordText: {
+    color: Colors.primary,
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  registerContainer: {
+    marginTop: 24,
+  },
 });

@@ -1,12 +1,6 @@
-import React from 'react';
-import { 
-  TouchableOpacity, 
-  Text, 
-  StyleSheet, 
-  ViewStyle,
-  TextStyle
-} from 'react-native';
 import { Colors } from '@/constants/Colors';
+import React from 'react';
+import { StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
 interface OutlinedButtonProps {
   title: string;
@@ -15,15 +9,10 @@ interface OutlinedButtonProps {
   textStyle?: TextStyle;
 }
 
-export const OutlinedButton = ({ 
-  title, 
-  onPress, 
-  style,
-  textStyle 
-}: OutlinedButtonProps) => {
+export const OutlinedButton = ({ title, onPress, style, textStyle }: OutlinedButtonProps) => {
   return (
-    <TouchableOpacity 
-      style={[styles.button, style]} 
+    <TouchableOpacity
+      style={[styles.button, style]}
       onPress={onPress}
       activeOpacity={0.6}
     >
@@ -35,7 +24,7 @@ export const OutlinedButton = ({
 const styles = StyleSheet.create({
   button: {
     backgroundColor: 'transparent',
-    borderWidth: 1, // En lugar de border: "1px solid color"
+    borderWidth: 1,
     borderColor: Colors.secondary,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -45,7 +34,7 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   text: {
-    color: Colors.primary, // El texto usa el color primario para destacar la acción
+    color: Colors.primary,
     fontSize: 14,
     fontWeight: '500',
   },

@@ -1,6 +1,6 @@
-import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
 import { Colors } from '@/constants/Colors';
+import React from 'react';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, TextStyle, ViewStyle } from 'react-native';
 
 interface PrimaryButtonProps {
   title: string;
@@ -12,8 +12,8 @@ interface PrimaryButtonProps {
 
 export const PrimaryButton = ({ title, onPress, isLoading = false, style, textStyle }: PrimaryButtonProps) => {
   return (
-    <TouchableOpacity 
-      style={[styles.button, style]} 
+    <TouchableOpacity
+      style={[styles.button, style]}
       onPress={onPress}
       disabled={isLoading}
       activeOpacity={0.8}
