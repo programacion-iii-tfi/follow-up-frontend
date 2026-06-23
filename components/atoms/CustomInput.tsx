@@ -50,11 +50,37 @@ export const CustomInput = ({ label, iconName, isPassword = false, ...props }: C
 };
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 20, marginTop: 8 },
-  labelContainer: { position: 'absolute', top: -10, left: 12, backgroundColor: Colors.surface, paddingHorizontal: 4, zIndex: 1 },
-  label: { fontSize: 12, fontWeight: '500' },
-  inputContainer: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 8, paddingHorizontal: 12, minHeight: 52 },
-  icon: { marginRight: 8 },
-  input: { flex: 1, fontSize: 16, color: Colors.neutral, minHeight: 52 },
-  showHideText: { color: Colors.primary, fontSize: 14, fontWeight: '600' }
+  container: {
+    marginBottom: 20,
+    marginTop: 8,
+  },
+  labelContainer: {
+    position: 'absolute',
+    top: -10,
+    left: 12,
+    backgroundColor: Colors.surface,
+    paddingHorizontal: 4,
+    zIndex: 1,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    minHeight: 52,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
+    color: Colors.neutral,
+    minHeight: 52,
+  },
 });
