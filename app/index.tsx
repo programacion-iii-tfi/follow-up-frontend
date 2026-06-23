@@ -52,7 +52,7 @@ export default function LoginScreen() {
             <View style={styles.accederRow}>
               <PrimaryButton
                 title="Acceder"
-                onPress={() => router.push('/(tutor)')}
+                onPress={() => router.push('/(tutor)/index' as any)}
                 style={styles.accederButton}
               />
             </View>
