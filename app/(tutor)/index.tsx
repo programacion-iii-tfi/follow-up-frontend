@@ -2,7 +2,9 @@ import { Colors } from '@/constants/Colors';
 import { ActividadesList } from '@/components/organisms/ActividadesList';
 import { AlumnosSelector } from '@/components/organisms/AlumnosSelector';
 import { DashboardHeader } from '@/components/organisms/DashboardHeader';
+import DrawerMenu, { DrawerMenuItem } from '@/components/organisms/DrawerMenu';
 import { InfoGrid } from '@/components/organisms/InfoGrid';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -31,7 +33,22 @@ const actividades = [
 ];
 
 export default function TutorDashboard() {
+  const router = useRouter();
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState('1');
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
+  const drawerItems: DrawerMenuItem[] = [
+    { icon: 'dashboard', label: 'Panel Principal' },
+    { icon: 'people', label: 'Mis Alumnos' },
+    { icon: 'event', label: 'Próximas Actividades' },
+    { icon: 'trending-up', label: 'Resumen de Notas' },
+    { icon: 'notifications', label: 'Notificaciones' },
+    { icon: 'chat', label: 'Contactar Docente' },
+  ];
+
+  const handleLogout = () => {
+    router.replace('/');
+  };
 
   return (
     <View style={styles.root}>
@@ -41,7 +58,10 @@ export default function TutorDashboard() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <DashboardHeader nombreTutor="Tutor" />
+          <DashboardHeader
+            nombreTutor="Tutor"
+            onMenuPress={() => setDrawerVisible(true)}
+          />
           <AlumnosSelector
             alumnos={alumnos}
             selectedId={alumnoSeleccionado}
@@ -68,6 +88,16 @@ export default function TutorDashboard() {
       <TouchableOpacity style={styles.fab} activeOpacity={0.85}>
         <MaterialIcons name="add" size={28} color={Colors.onPrimary} />
       </TouchableOpacity>
+      <DrawerMenu
+        visible={drawerVisible}
+        onClose={() => setDrawerVisible(false)}
+        nombre="Tutor Usuario"
+        rol="Tutor"
+        rolColor="#386A20"
+        items={drawerItems}
+        activeLabel="Panel Principal"
+        onLogout={handleLogout}
+      />
     </View>
   );
 }
