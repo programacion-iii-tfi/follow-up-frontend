@@ -3,6 +3,7 @@ import EstadoGrid, { StatCardData } from '@/components/organisms/EstadoGrid';
 import ModulosList, { ModuloItemData } from '@/components/organisms/ModulosList';
 import ResumenCard from '@/components/organisms/ResumenCard';
 import { Colors } from '@/constants/Colors';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,14 +15,16 @@ const statsData: StatCardData[] = [
     { id: '4', label: 'Alertas', value: '5% (Normal)', icon: 'warning', iconColor: '#B3261E', valueColor: '#B3261E' },
 ];
 
-const modulosData: ModuloItemData[] = [
-    { id: '1', icon: 'person-add', label: 'Cargar Alumno', onPress: () => console.log('Cargar Alumno') },
-    { id: '2', icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => console.log('Cargar Docente') },
-    { id: '3', icon: 'domain', label: 'Cargar Curso / División', onPress: () => console.log('Cargar Curso') },
-    { id: '4', icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => console.log('Reportes') },
-];
-
 export default function AdminDashboard() {
+
+    const router = useRouter();
+
+    const modulosData: ModuloItemData[] = [
+        { id: '1', icon: 'person-add', label: 'Cargar Alumno', onPress: () => router.push('/(admin)/cargar-alumno' as any) },
+        { id: '2', icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => router.push('/(admin)/cargar-docente' as any) },
+        { id: '3', icon: 'domain', label: 'Cargar Curso / División', onPress: () => router.push('/(admin)/cargar-curso' as any) },
+        { id: '4', icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => router.push('/(admin)/reportes' as any) },
+    ];
     const handleMenuPress = () => {
         console.log('Menu pressed');
     };
