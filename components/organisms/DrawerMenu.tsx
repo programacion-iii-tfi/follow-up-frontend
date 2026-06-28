@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const DRAWER_WIDTH = Dimensions.get('window').width * 0.8;
 
@@ -51,6 +52,7 @@ export default function DrawerMenu({
 }: DrawerMenuProps) {
   const translateX = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
   const overlayOpacity = useRef(new Animated.Value(0)).current;
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (visible) {
@@ -100,8 +102,8 @@ export default function DrawerMenu({
           <Pressable style={styles.overlayPressable} onPress={onClose} />
         </Animated.View>
 
-        <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose} activeOpacity={0.7}>
+        <Animated.View style={[styles.drawer, { transform: [{ translateX }], paddingTop: insets.top + 16 }]}>
+          <TouchableOpacity style={[styles.closeButton, { top: insets.top + 10 }]} onPress={onClose} activeOpacity={0.7}>
             <MaterialIcons name="close" size={24} color={Colors.secondary} />
           </TouchableOpacity>
 
@@ -172,7 +174,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: DRAWER_WIDTH,
     backgroundColor: Colors.white,
-    paddingTop: 52,
     paddingHorizontal: 20,
     paddingBottom: 32,
     shadowColor: '#000',
@@ -183,7 +184,6 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: 16,
     right: 16,
     padding: 6,
   },
