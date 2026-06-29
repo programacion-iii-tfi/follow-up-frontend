@@ -80,7 +80,7 @@ export default function TutorDashboard() {
             <MaterialIcons name="chat-bubble-outline" size={24} color={Colors.outline} />
             <Text style={styles.bottomBarText}>Contacto</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.bottomBarItem} onPress={() => router.push('/(tutor)/agenda')} activeOpacity={0.7}>
             <MaterialIcons name="calendar-today" size={24} color={Colors.outline} />
             <Text style={styles.bottomBarText}>Agenda</Text>
           </TouchableOpacity>
