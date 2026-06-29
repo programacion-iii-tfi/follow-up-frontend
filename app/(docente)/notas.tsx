@@ -99,82 +99,82 @@ export default function NotasDocenteScreen() {
           </View>
         </View>
 
+        {/* ── Selector de Materia ───────────── */}
+        <View style={styles.materiaContainer}>
+          <View style={{ zIndex: 10 }}>
+            <Text style={styles.materiaLabel}>MATERIA</Text>
+            <View style={styles.materiaRow}>
+              <Text style={styles.materiaNombre} numberOfLines={1}>{materiaActiva}</Text>
+              <TouchableOpacity
+                style={styles.cambiarButton}
+                onPress={() => setMostrarDropdown(!mostrarDropdown)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.cambiarText}>Cambiar</Text>
+                <MaterialIcons
+                  name={mostrarDropdown ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
+                  size={18}
+                  color={PRIMARY}
+                />
+              </TouchableOpacity>
+            </View>
+            {mostrarDropdown && (
+              <View style={styles.dropdownMenu}>
+                {materias.map((m) => (
+                  <TouchableOpacity
+                    key={m}
+                    style={[styles.dropdownItem, m === materiaActiva && styles.dropdownItemActive]}
+                    onPress={() => { setMateriaActiva(m); setMostrarDropdown(false); }}
+                  >
+                    <Text style={[styles.dropdownItemText, m === materiaActiva && styles.dropdownItemTextActive]}>{m}</Text>
+                    {m === materiaActiva && <MaterialIcons name="check" size={16} color={PRIMARY} />}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* ── Chips de Tipo de Evaluación ───── */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipsRow}
+          style={styles.chipsScroll}
+        >
+          {tiposEval.map((tipo) => {
+            const isActive = tipo.id === tipoActivo;
+            return (
+              <TouchableOpacity
+                key={tipo.id}
+                style={[styles.chip, isActive && styles.chipActive]}
+                onPress={() => setTipoActivo(tipo.id)}
+                activeOpacity={0.7}
+              >
+                <MaterialIcons
+                  name={tipo.icono}
+                  size={15}
+                  color={isActive ? PRIMARY : Colors.secondary}
+                />
+                <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
+                  {tipo.id}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+
+        {/* ── Encabezado de lista ───────────── */}
+        <View style={[styles.listHeader, styles.listHeaderPadded]}>
+          <Text style={styles.listHeaderLeft}>Alumnos ({alumnos.length})</Text>
+          <Text style={styles.listHeaderRight}>Nota (0-10)</Text>
+        </View>
+
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <View style={styles.content}>
-
-            {/* ── Selector de Materia ───────────── */}
-            <View style={styles.materiaContainer}>
-              <View style={{ zIndex: 10 }}>
-                <Text style={styles.materiaLabel}>MATERIA</Text>
-                <View style={styles.materiaRow}>
-                  <Text style={styles.materiaNombre} numberOfLines={1}>{materiaActiva}</Text>
-                  <TouchableOpacity
-                    style={styles.cambiarButton}
-                    onPress={() => setMostrarDropdown(!mostrarDropdown)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.cambiarText}>Cambiar</Text>
-                    <MaterialIcons
-                      name={mostrarDropdown ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
-                      size={18}
-                      color={PRIMARY}
-                    />
-                  </TouchableOpacity>
-                </View>
-                {mostrarDropdown && (
-                  <View style={styles.dropdownMenu}>
-                    {materias.map((m) => (
-                      <TouchableOpacity
-                        key={m}
-                        style={[styles.dropdownItem, m === materiaActiva && styles.dropdownItemActive]}
-                        onPress={() => { setMateriaActiva(m); setMostrarDropdown(false); }}
-                      >
-                        <Text style={[styles.dropdownItemText, m === materiaActiva && styles.dropdownItemTextActive]}>{m}</Text>
-                        {m === materiaActiva && <MaterialIcons name="check" size={16} color={PRIMARY} />}
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                )}
-              </View>
-            </View>
-
-            {/* ── Chips de Tipo de Evaluación ───── */}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.chipsRow}
-            >
-              {tiposEval.map((tipo) => {
-                const isActive = tipo.id === tipoActivo;
-                return (
-                  <TouchableOpacity
-                    key={tipo.id}
-                    style={[styles.chip, isActive && styles.chipActive]}
-                    onPress={() => setTipoActivo(tipo.id)}
-                    activeOpacity={0.7}
-                  >
-                    <MaterialIcons
-                      name={tipo.icono}
-                      size={15}
-                      color={isActive ? PRIMARY : Colors.secondary}
-                    />
-                    <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
-                      {tipo.id}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-
-            {/* ── Encabezado de lista ───────────── */}
-            <View style={styles.listHeader}>
-              <Text style={styles.listHeaderLeft}>Alumnos ({alumnos.length})</Text>
-              <Text style={styles.listHeaderRight}>Nota (0-10)</Text>
-            </View>
-
             {/* ── Lista de Alumnos ──────────────── */}
             <FlatList
               data={alumnos}
@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
   materiaContainer: {
     marginBottom: 14,
     zIndex: 10,
+    paddingHorizontal: 20,
   },
   materiaLabel: {
     fontSize: 10,
@@ -350,9 +351,13 @@ const styles = StyleSheet.create({
   dropdownItemActive: { backgroundColor: PRIMARY + '08' },
   dropdownItemText: { fontSize: 13, color: Colors.secondary },
   dropdownItemTextActive: { color: PRIMARY, fontWeight: '700' },
+  chipsScroll: {
+    flexShrink: 0,
+    marginBottom: 14,
+  },
   chipsRow: {
     gap: 8,
-    paddingBottom: 14,
+    paddingHorizontal: 20,
   },
   chip: {
     flexDirection: 'row',
@@ -376,6 +381,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
+  },
+  listHeaderPadded: {
+    paddingHorizontal: 20,
   },
   listHeaderLeft: { fontSize: 13, fontWeight: '700', color: Colors.secondary },
   listHeaderRight: { fontSize: 12, fontWeight: '700', color: Colors.outline },
