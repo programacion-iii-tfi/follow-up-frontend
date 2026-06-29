@@ -21,19 +21,21 @@ interface InfoGridProps {
 export const InfoGrid = ({ cards, onCardPress }: InfoGridProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Resumen</Text>
-      <View style={styles.grid}>
-        {cards.map((card) => (
-          <InfoCard
-            key={card.id}
-            titulo={card.titulo}
-            valor={card.valor}
-            subtitulo={card.subtitulo}
-            icono={card.icono}
-            color={card.color}
-            onPress={() => onCardPress?.(card.id)}
-          />
-        ))}
+      <Text style={styles.title}>INFORMACIÓN</Text>
+      <View style={styles.infoContainer}>
+        <View style={styles.grid}>
+          {cards.map((card) => (
+            <InfoCard
+              key={card.id}
+              titulo={card.titulo}
+              valor={card.valor}
+              subtitulo={card.subtitulo}
+              icono={card.icono}
+              color={card.color}
+              onPress={() => onCardPress?.(card.id)}
+            />
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -41,18 +43,26 @@ export const InfoGrid = ({ cards, onCardPress }: InfoGridProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 8,
+    paddingTop: 16,
   },
   title: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
-    color: Colors.neutral,
+    color: Colors.secondary,
     paddingHorizontal: 20,
-    marginBottom: 12,
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  infoContainer: {
+    backgroundColor: '#F8F8FA', // The greyish background
+    marginHorizontal: 12,
+    borderRadius: 16,
+    padding: 12,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 12,
+    justifyContent: 'space-between',
   },
 });

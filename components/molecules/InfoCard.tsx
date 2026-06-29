@@ -15,10 +15,9 @@ interface InfoCardProps {
 export const InfoCard = ({ titulo, valor, subtitulo, icono, color, onPress }: InfoCardProps) => {
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={onPress}>
-      <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
-        <MaterialIcons name={icono} size={24} color={color} />
+      <View style={[styles.iconContainer, { backgroundColor: color + '15' }]}>
+        <MaterialIcons name={icono} size={22} color={color} />
       </View>
-      <Text style={styles.valor}>{valor}</Text>
       <Text style={styles.titulo}>{titulo}</Text>
       <Text style={styles.subtitulo}>{subtitulo}</Text>
     </TouchableOpacity>
@@ -27,32 +26,28 @@ export const InfoCard = ({ titulo, valor, subtitulo, icono, color, onPress }: In
 
 const styles = StyleSheet.create({
   card: {
-    width: '50%',
-    padding: 8,
+    width: '48%',
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
   },
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
-  },
-  valor: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: Colors.neutral,
-    lineHeight: 30,
+    marginBottom: 12,
   },
   titulo: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
     color: Colors.neutral,
-    marginTop: 2,
   },
   subtitulo: {
-    fontSize: 12,
+    fontSize: 13,
     color: Colors.secondary,
-    marginTop: 2,
+    marginTop: 4,
   },
 });

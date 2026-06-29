@@ -1,14 +1,14 @@
-import { Colors } from '@/constants/Colors';
 import { ActividadesList } from '@/components/organisms/ActividadesList';
 import { AlumnosSelector } from '@/components/organisms/AlumnosSelector';
 import { DashboardHeader } from '@/components/organisms/DashboardHeader';
 import DrawerMenu, { DrawerMenuItem } from '@/components/organisms/DrawerMenu';
 import { InfoGrid } from '@/components/organisms/InfoGrid';
+import { Colors } from '@/constants/Colors';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
 
 const alumnos = [
   { id: '1', nombre: 'Alegre Fabricio' },
@@ -19,10 +19,10 @@ const alumnos = [
 ];
 
 const infoCards = [
-  { id: '1', titulo: 'Inasistencias', valor: '3', subtitulo: 'este mes', icono: 'event-busy' as const, color: '#B3261E' },
-  { id: '2', titulo: 'Boletín', valor: '7.8', subtitulo: 'promedio general', icono: 'menu-book' as const, color: '#6750A4' },
-  { id: '3', titulo: 'Actividades', valor: '5', subtitulo: 'pendientes', icono: 'assignment' as const, color: '#625B71' },
-  { id: '4', titulo: 'Asistencia', valor: '87%', subtitulo: 'del ciclo lectivo', icono: 'check-circle-outline' as const, color: '#386A20' },
+  { id: '1', titulo: 'inasistencia', valor: '', subtitulo: '3 días', icono: 'person-off' as const, color: '#B3261E' },
+  { id: '2', titulo: 'Boletín', valor: '', subtitulo: 'Ciclo 1', icono: 'menu-book' as const, color: '#6750A4' },
+  { id: '3', titulo: 'amonestaciones', valor: '', subtitulo: 'Ninguna', icono: 'warning' as const, color: '#B3261E' },
+  { id: '4', titulo: 'Horarios', valor: '', subtitulo: 'Ver grilla', icono: 'schedule' as const, color: '#6750A4' },
 ];
 
 const actividades = [
@@ -73,15 +73,19 @@ export default function TutorDashboard() {
         <View style={styles.bottomBar}>
           <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
             <MaterialIcons name="home" size={24} color={Colors.primary} />
+            <Text style={[styles.bottomBarText, { color: Colors.primary }]}>Inicio</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
-            <MaterialIcons name="people-outline" size={24} color={Colors.outline} />
+            <MaterialIcons name="chat-bubble-outline" size={24} color={Colors.outline} />
+            <Text style={styles.bottomBarText}>Contacto</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
             <MaterialIcons name="calendar-today" size={24} color={Colors.outline} />
+            <Text style={styles.bottomBarText}>Agenda</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
-            <MaterialIcons name="person-outline" size={24} color={Colors.outline} />
+            <MaterialIcons name="menu-book" size={24} color={Colors.outline} />
+            <Text style={styles.bottomBarText}>Notas</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -128,7 +132,13 @@ const styles = StyleSheet.create({
   bottomBarItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 4,
+    paddingVertical: 6,
+    gap: 4,
+  },
+  bottomBarText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: Colors.outline,
   },
   fab: {
     position: 'absolute',
