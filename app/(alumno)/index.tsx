@@ -151,7 +151,7 @@ export default function AlumnoDashboard() {
 
           {/* ── Aviso ───────────────────────────────────── */}
           <Text style={styles.sectionLabel}>AVISO</Text>
-          <TouchableOpacity style={styles.avisoCard} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.avisoCard} onPress={() => router.push('/(alumno)/aviso')} activeOpacity={0.8}>
             <View style={styles.avisoTextCol}>
               <Text style={styles.avisoTitle}>Circular Fin de Mes</Text>
               <Text style={styles.avisoSubtitle}>Ver detalles</Text>
