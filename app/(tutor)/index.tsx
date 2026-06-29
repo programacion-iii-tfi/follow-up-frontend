@@ -39,11 +39,11 @@ export default function TutorDashboard() {
   const insets = useSafeAreaInsets();
 
   const drawerItems: DrawerMenuItem[] = [
-    { icon: 'dashboard', label: 'Panel Principal' },
+    { icon: 'dashboard', label: 'Panel Principal', onPress: () => router.replace('/(tutor)') },
     { icon: 'people', label: 'Mis Alumnos' },
-    { icon: 'event', label: 'Próximas Actividades' },
-    { icon: 'trending-up', label: 'Resumen de Notas' },
-    { icon: 'notifications', label: 'Notificaciones' },
+    { icon: 'event', label: 'Próximas Actividades', onPress: () => router.push('/(tutor)/agenda') },
+    { icon: 'trending-up', label: 'Resumen de Notas', onPress: () => router.push('/(tutor)/notas') },
+    { icon: 'notifications', label: 'Notificaciones', onPress: () => router.push('/(tutor)/notificaciones') },
     { icon: 'chat', label: 'Contactar Docente' },
   ];
 
@@ -62,6 +62,7 @@ export default function TutorDashboard() {
           <DashboardHeader
             nombreTutor="Tutor"
             onMenuPress={() => setDrawerVisible(true)}
+            onNotificationsPress={() => router.push('/(tutor)/notificaciones')}
           />
           <AlumnosSelector
             alumnos={alumnos}
