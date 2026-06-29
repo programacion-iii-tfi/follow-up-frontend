@@ -69,7 +69,9 @@ export default function NotificacionesScreen() {
 
   return (
     <View style={styles.root}>
-      <NotificationsView notifications={mockNotifications} />
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <NotificationsView notifications={mockNotifications} />
+      </SafeAreaView>
       
       {/* Bottom Bar specific to Tutor */}
       <SafeAreaView edges={[]} style={[styles.bottomBarContainer, { paddingBottom: Math.max(insets.bottom, 4) }]}>
@@ -100,6 +102,9 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: Colors.background,
+  },
+  safeArea: {
+    flex: 1,
   },
   bottomBarContainer: {
     backgroundColor: Colors.white,
