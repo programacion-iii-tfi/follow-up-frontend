@@ -65,7 +65,7 @@ export default function CrearAvisoScreen() {
             keyboardShouldPersistTaps="handled"
           >
             {/* ── Destinatarios ─────────────────── */}
-            <View style={styles.fieldContainer}>
+            <View style={[styles.fieldContainer, { zIndex: mostrarDestDropdown ? 10 : 1 }]}>
               <Text style={styles.fieldLabel}>Destinatarios</Text>
               <TouchableOpacity
                 style={styles.dropdown}
@@ -234,7 +234,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   fieldContainer: {
-    zIndex: 5,
+    width: '100%',
+    zIndex: 1,
   },
   fieldLabel: {
     fontSize: 11,
