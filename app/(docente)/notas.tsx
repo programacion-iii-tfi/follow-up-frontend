@@ -153,8 +153,8 @@ export default function NotasDocenteScreen() {
               >
                 <MaterialIcons
                   name={tipo.icono}
-                  size={15}
-                  color={isActive ? PRIMARY : Colors.secondary}
+                  size={16}
+                  color={isActive ? '#21005D' : '#49454F'}
                 />
                 <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
                   {tipo.id}
@@ -363,19 +363,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingHorizontal: 12,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: Colors.white,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: '#79747E',
   },
   chipActive: {
-    backgroundColor: '#E8EEF7',
-    borderColor: PRIMARY,
+    backgroundColor: '#E8DDFF',
+    borderColor: '#E8DDFF',
   },
-  chipText: { fontSize: 13, fontWeight: '600', color: Colors.secondary },
-  chipTextActive: { color: PRIMARY },
+  chipText: { fontSize: 12, fontWeight: '600', color: '#49454F' },
+  chipTextActive: { color: '#21005D' },
   listHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
