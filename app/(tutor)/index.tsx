@@ -84,8 +84,8 @@ export default function TutorDashboard() {
             <MaterialIcons name="calendar-today" size={24} color={Colors.outline} />
             <Text style={styles.bottomBarText}>Agenda</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
-            <MaterialIcons name="menu-book" size={24} color={Colors.outline} />
+          <TouchableOpacity style={styles.bottomBarItem} onPress={() => router.push('/(tutor)/notas')} activeOpacity={0.7}>
+            <MaterialIcons name="grade" size={24} color={Colors.outline} />
             <Text style={styles.bottomBarText}>Notas</Text>
           </TouchableOpacity>
         </View>
