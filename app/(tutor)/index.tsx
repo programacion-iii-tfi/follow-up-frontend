@@ -77,7 +77,7 @@ export default function TutorDashboard() {
             <MaterialIcons name="home" size={24} color={Colors.primary} />
             <Text style={[styles.bottomBarText, { color: Colors.primary }]}>Inicio</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.bottomBarItem} onPress={() => router.push('/(tutor)/contacto')} activeOpacity={0.7}>
             <MaterialIcons name="chat-bubble-outline" size={24} color={Colors.outline} />
             <Text style={styles.bottomBarText}>Contacto</Text>
           </TouchableOpacity>
