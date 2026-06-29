@@ -21,7 +21,7 @@ const alumnos = [
 const infoCards = [
   { id: '1', titulo: 'inasistencia', valor: '', subtitulo: '3 días', icono: 'person-off' as const, color: '#B3261E' },
   { id: '2', titulo: 'Boletín', valor: '', subtitulo: 'Ciclo 1', icono: 'menu-book' as const, color: '#6750A4' },
-  { id: '3', titulo: 'amonestaciones', valor: '', subtitulo: 'Ninguna', icono: 'warning' as const, color: '#B3261E' },
+  { id: '3', titulo: 'Comunicados', valor: '', subtitulo: '2 nuevos', icono: 'mark-email-unread' as const, color: '#E65100' },
   { id: '4', titulo: 'Horarios', valor: '', subtitulo: 'Ver grilla', icono: 'schedule' as const, color: '#6750A4' },
 ];
 
