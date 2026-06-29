@@ -143,9 +143,9 @@ export default function DocenteDashboard() {
         <TouchableOpacity
           style={[styles.fab, { bottom: Math.max(insets.bottom, 4) + 68 }]}
           activeOpacity={0.85}
-          onPress={() => router.push('/(docente)/crear-aviso')}
+          onPress={() => router.push('/(docente)/observacion')}
         >
-          <MaterialIcons name="add" size={28} color={Colors.white} />
+          <MaterialIcons name="edit-note" size={28} color={Colors.white} />
         </TouchableOpacity>
 
         {/* ── Bottom Bar ───────────────────────────────── */}
