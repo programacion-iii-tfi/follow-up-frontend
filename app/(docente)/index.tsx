@@ -158,7 +158,7 @@ export default function DocenteDashboard() {
             <MaterialIcons name="class" size={24} color={Colors.outline} />
             <Text style={styles.bottomBarText}>Materias</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.bottomBarItem} onPress={() => router.push('/(docente)/perfil')} activeOpacity={0.7}>
             <MaterialIcons name="person-outline" size={24} color={Colors.outline} />
             <Text style={styles.bottomBarText}>Perfil</Text>
           </TouchableOpacity>

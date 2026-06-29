@@ -235,7 +235,7 @@ export default function NotasDocenteScreen() {
             <MaterialIcons name="class" size={24} color={PRIMARY} />
             <Text style={[styles.bottomBarText, { color: PRIMARY }]}>Materias</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.bottomBarItem} onPress={() => router.replace('/(docente)/perfil')} activeOpacity={0.7}>
             <MaterialIcons name="person-outline" size={24} color={Colors.outline} />
             <Text style={styles.bottomBarText}>Perfil</Text>
           </TouchableOpacity>
