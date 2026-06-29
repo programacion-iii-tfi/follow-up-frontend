@@ -358,6 +358,7 @@ const styles = StyleSheet.create({
   chipsRow: {
     gap: 8,
     paddingHorizontal: 20,
+    alignItems: 'center',
   },
   chip: {
     flexDirection: 'row',
@@ -374,8 +375,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8DDFF',
     borderColor: '#E8DDFF',
   },
-  chipText: { fontSize: 12, fontWeight: '600', color: '#49454F' },
-  chipTextActive: { color: '#21005D' },
+  chipText: { fontSize: 12, fontWeight: '500', color: '#49454F' },
+  chipTextActive: { color: '#21005D', fontWeight: '600' },
   listHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
