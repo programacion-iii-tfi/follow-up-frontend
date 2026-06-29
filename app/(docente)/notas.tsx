@@ -352,7 +352,8 @@ const styles = StyleSheet.create({
   dropdownItemText: { fontSize: 13, color: Colors.secondary },
   dropdownItemTextActive: { color: PRIMARY, fontWeight: '700' },
   chipsScroll: {
-    flexShrink: 0,
+    flexGrow: 0,
+    height: 36,
     marginBottom: 14,
   },
   chipsRow: {
