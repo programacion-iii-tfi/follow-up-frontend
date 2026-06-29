@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { mockAvisos } from './aviso';
 
 const PRIMARY = '#6750A4';
 
@@ -150,15 +151,21 @@ export default function AlumnoDashboard() {
           </View>
 
           {/* ── Aviso ───────────────────────────────────── */}
-          <Text style={styles.sectionLabel}>AVISO</Text>
-          <TouchableOpacity style={styles.avisoCard} onPress={() => router.push('/(alumno)/aviso')} activeOpacity={0.8}>
-            <View style={styles.avisoTextCol}>
-              <Text style={styles.avisoTitle}>Circular Fin de Mes</Text>
-              <Text style={styles.avisoSubtitle}>Ver detalles</Text>
-            </View>
-            <MaterialIcons name="chevron-right" size={22} color={PRIMARY} />
-          </TouchableOpacity>
-
+          <Text style={styles.sectionLabel}>AVISOS RECIENTES</Text>
+          {mockAvisos.slice(0, 2).map((aviso) => (
+            <TouchableOpacity 
+              key={aviso.id}
+              style={[styles.avisoCard, { marginBottom: 12 }]} 
+              onPress={() => router.push({ pathname: '/(alumno)/aviso', params: { id: aviso.id } })} 
+              activeOpacity={0.8}
+            >
+              <View style={styles.avisoTextCol}>
+                <Text style={styles.avisoTitle} numberOfLines={1}>{aviso.titulo}</Text>
+                <Text style={styles.avisoSubtitle}>{aviso.remitente}</Text>
+              </View>
+              <MaterialIcons name="chevron-right" size={22} color={PRIMARY} />
+            </TouchableOpacity>
+          ))}
         </ScrollView>
 
         {/* ── Bottom Bar ───────────────────────────────── */}

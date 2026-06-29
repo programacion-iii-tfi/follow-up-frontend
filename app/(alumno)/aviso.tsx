@@ -1,14 +1,45 @@
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PRIMARY = '#6750A4';
 
+export const mockAvisos = [
+  {
+    id: '1',
+    titulo: 'Circular Fin de Mes',
+    remitente: 'Dirección Académica',
+    fecha: 'Hoy, 09:30 AM',
+    urgente: true,
+    cuerpo: 'Estimados alumnos y familias:\n\nNos dirigimos a ustedes para informarles que el próximo viernes 30 de noviembre se llevará a cabo el acto de cierre del mes. Por este motivo, las actividades extracurriculares de la tarde quedarán suspendidas.\n\nAsimismo, les recordamos que ya se encuentran disponibles las calificaciones parciales del trimestre en la sección "Notas" de esta misma aplicación.\n\nCualquier consulta, por favor dirigirse al departamento de alumnos.\n\nSaludos cordiales,\nLa Dirección.',
+  },
+  {
+    id: '2',
+    titulo: 'Convocatoria Feria de Ciencias',
+    remitente: 'Depto. de Ciencias',
+    fecha: 'Ayer, 14:15 PM',
+    urgente: false,
+    cuerpo: 'Se invita a todos los alumnos a participar en la Feria de Ciencias Anual que se realizará la segunda semana de noviembre.\n\nLos equipos interesados deberán inscribir sus proyectos antes del viernes en la preceptoría. Habrá premios para los proyectos más innovadores en robótica y sustentabilidad.\n\n¡Esperamos contar con su participación!',
+  },
+  {
+    id: '3',
+    titulo: 'Cambio de Aula - Biología',
+    remitente: 'Preceptoría',
+    fecha: 'Lunes, 08:00 AM',
+    urgente: false,
+    cuerpo: 'Informamos a todos los alumnos de 4to Año B que las clases de Biología Celular de esta semana se dictarán excepcionalmente en el Laboratorio 2, ya que el aula habitual se encuentra en tareas de mantenimiento.\n\nPor favor dirigirse directamente al laboratorio en el horario de clase correspondiente.',
+  }
+];
+
 export default function AvisoDetalleScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  
+  // Buscar el aviso por ID o mostrar el primero por defecto
+  const aviso = mockAvisos.find(a => a.id === id) || mockAvisos[0];
 
   return (
     <View style={styles.root}>
@@ -35,28 +66,22 @@ export default function AvisoDetalleScreen() {
                   <MaterialIcons name="business" size={20} color={Colors.white} />
                 </View>
                 <View>
-                  <Text style={styles.senderName}>Dirección Académica</Text>
-                  <Text style={styles.senderDate}>Hoy, 09:30 AM</Text>
+                  <Text style={styles.senderName}>{aviso.remitente}</Text>
+                  <Text style={styles.senderDate}>{aviso.fecha}</Text>
                 </View>
               </View>
-              <View style={styles.badgeUrgent}>
-                <Text style={styles.badgeText}>Importante</Text>
-              </View>
+              {aviso.urgente && (
+                <View style={styles.badgeUrgent}>
+                  <Text style={styles.badgeText}>Importante</Text>
+                </View>
+              )}
             </View>
 
             <View style={styles.divider} />
 
             {/* Contenido del Aviso */}
-            <Text style={styles.title}>Circular Fin de Mes</Text>
-            <Text style={styles.bodyText}>
-              Estimados alumnos y familias:{'\n\n'}
-              Nos dirigimos a ustedes para informarles que el próximo viernes 30 de noviembre se llevará a cabo el acto de cierre del mes. 
-              Por este motivo, las actividades extracurriculares de la tarde quedarán suspendidas.{'\n\n'}
-              Asimismo, les recordamos que ya se encuentran disponibles las calificaciones parciales del trimestre en la sección "Notas" de esta misma aplicación.{'\n\n'}
-              Cualquier consulta, por favor dirigirse al departamento de alumnos.{'\n\n'}
-              Saludos cordiales,{'\n'}
-              La Dirección.
-            </Text>
+            <Text style={styles.title}>{aviso.titulo}</Text>
+            <Text style={styles.bodyText}>{aviso.cuerpo}</Text>
 
             {/* Acciones */}
             <View style={styles.actionRow}>
