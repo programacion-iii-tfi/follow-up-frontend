@@ -17,6 +17,7 @@ export default function RootLayout() {
           <Stack.Screen name="register" options={{ headerShown: false }} />
           <Stack.Screen name="(tutor)" options={{ headerShown: false }} />
           <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+          <Stack.Screen name="(docente)" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
