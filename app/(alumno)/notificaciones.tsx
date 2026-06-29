@@ -29,7 +29,7 @@ const mockNotifications = [
     urgente: true,
     icono: 'warning' as const,
     iconoColor: '#B3261E',
-    tipoAccion: 'button' as const,
+    tipoAccion: 'boton' as const,
     textoAccion: 'Ver Circular',
     leido: false,
   },
@@ -57,7 +57,7 @@ export default function NotificacionesAlumnoScreen() {
 
       {/* Bottom Bar specific to Alumno */}
       <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 4) }]}>
-        <TouchableOpacity style={styles.bottomBarItem} onPress={() => router.replace('/(alumno)')} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.bottomBarItem} onPress={() => router.replace('/(alumno)/index')} activeOpacity={0.7}>
           <MaterialIcons name="space-dashboard" size={24} color={Colors.outline} />
           <Text style={styles.bottomBarText}>Inicio</Text>
         </TouchableOpacity>
