@@ -37,7 +37,7 @@ export default function AdminDashboard() {
     ];
 
     const handleLogout = () => {
-        router.dismissAll();
+        router.replace('/');
     };
 
     return (
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
                 nombreAdmin="Fabricio"
                 onMenuPress={() => setDrawerVisible(true)}
                 onNotificationsPress={() => {}}
-                onAvatarPress={() => {}}
+                onAvatarPress={() => router.push('/(admin)/perfil')}
             />
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.titleSection}>

@@ -50,7 +50,7 @@ export default function DocenteDashboard() {
   ];
 
   const handleLogout = () => {
-    router.dismissAll();
+    router.replace('/');
   };
 
   return (

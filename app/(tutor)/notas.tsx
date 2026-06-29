@@ -67,9 +67,11 @@ export default function NotasScreen() {
             <MaterialIcons name="arrow-back" size={24} color={Colors.primary} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Boletín de Calificaciones</Text>
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarText}>M</Text>
-          </View>
+          <TouchableOpacity activeOpacity={0.8} onPress={() => router.push('/(tutor)/perfil')}>
+            <View style={styles.avatarPlaceholder}>
+              <Text style={styles.avatarText}>M</Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Student Selector */}

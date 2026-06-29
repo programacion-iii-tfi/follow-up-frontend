@@ -48,7 +48,7 @@ export default function TutorDashboard() {
   ];
 
   const handleLogout = () => {
-    router.dismissAll();
+    router.replace('/');
   };
 
   return (
@@ -63,6 +63,7 @@ export default function TutorDashboard() {
             nombreTutor="Tutor"
             onMenuPress={() => setDrawerVisible(true)}
             onNotificationsPress={() => router.push('/(tutor)/notificaciones')}
+            onAvatarPress={() => router.push('/(tutor)/perfil')}
           />
           <AlumnosSelector
             alumnos={alumnos}
