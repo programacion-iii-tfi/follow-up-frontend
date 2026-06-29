@@ -8,7 +8,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const alumnos = [
   { id: '1', nombre: 'Alegre Fabricio' },
@@ -36,6 +36,7 @@ export default function TutorDashboard() {
   const router = useRouter();
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState('1');
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const drawerItems: DrawerMenuItem[] = [
     { icon: 'dashboard', label: 'Panel Principal' },
@@ -52,7 +53,7 @@ export default function TutorDashboard() {
 
   return (
     <View style={styles.root}>
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -70,7 +71,7 @@ export default function TutorDashboard() {
           <InfoGrid cards={infoCards} />
           <ActividadesList actividades={actividades} />
         </ScrollView>
-        <View style={styles.bottomBar}>
+        <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 4) }]}>
           <TouchableOpacity style={styles.bottomBarItem} activeOpacity={0.7}>
             <MaterialIcons name="home" size={24} color={Colors.primary} />
             <Text style={[styles.bottomBarText, { color: Colors.primary }]}>Inicio</Text>
@@ -89,9 +90,6 @@ export default function TutorDashboard() {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-      <TouchableOpacity style={styles.fab} activeOpacity={0.85}>
-        <MaterialIcons name="add" size={28} color={Colors.onPrimary} />
-      </TouchableOpacity>
       <DrawerMenu
         visible={drawerVisible}
         onClose={() => setDrawerVisible(false)}
@@ -125,7 +123,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
-    paddingBottom: 4,
     paddingTop: 8,
     paddingHorizontal: 8,
   },
@@ -139,21 +136,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
     color: Colors.outline,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 80,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 6,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
   },
 });
