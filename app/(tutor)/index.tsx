@@ -47,7 +47,7 @@ export default function TutorDashboard() {
   ];
 
   const handleLogout = () => {
-    router.replace('/' as any);
+    router.dismissAll();
   };
 
   return (
