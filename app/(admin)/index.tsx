@@ -1,9 +1,11 @@
 import AdminHeader from '@/components/organisms/AdminHeader';
+import DrawerMenu, { DrawerMenuItem } from '@/components/organisms/DrawerMenu';
 import EstadoGrid, { StatCardData } from '@/components/organisms/EstadoGrid';
 import ModulosList, { ModuloItemData } from '@/components/organisms/ModulosList';
 import ResumenCard from '@/components/organisms/ResumenCard';
 import { Colors } from '@/constants/Colors';
-import React from 'react';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -14,37 +16,37 @@ const statsData: StatCardData[] = [
     { id: '4', label: 'Alertas', value: '5% (Normal)', icon: 'warning', iconColor: '#B3261E', valueColor: '#B3261E' },
 ];
 
-const modulosData: ModuloItemData[] = [
-    { id: '1', icon: 'person-add', label: 'Cargar Alumno', onPress: () => console.log('Cargar Alumno') },
-    { id: '2', icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => console.log('Cargar Docente') },
-    { id: '3', icon: 'domain', label: 'Cargar Curso / División', onPress: () => console.log('Cargar Curso') },
-    { id: '4', icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => console.log('Reportes') },
-];
-
 export default function AdminDashboard() {
-    const handleMenuPress = () => {
-        console.log('Menu pressed');
-    };
+    const router = useRouter();
+    const [drawerVisible, setDrawerVisible] = useState(false);
 
-    const handleNotificationsPress = () => {
-        console.log('Notifications pressed');
-    };
+    const modulosData: ModuloItemData[] = [
+        { id: '1', icon: 'person-add', label: 'Cargar Alumno', onPress: () => router.push('/(admin)/cargar-alumno' as any) },
+        { id: '2', icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => router.push('/(admin)/cargar-docente' as any) },
+        { id: '3', icon: 'domain', label: 'Cargar Curso / División', onPress: () => router.push('/(admin)/cargar-curso' as any) },
+        { id: '4', icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => router.push('/(admin)/reportes' as any) },
+    ];
 
-    const handleAvatarPress = () => {
-        console.log('Avatar pressed');
-    };
+    const drawerItems: DrawerMenuItem[] = [
+        { icon: 'dashboard', label: 'Panel Principal' },
+        { icon: 'person-add', label: 'Cargar Alumno', onPress: () => router.push('/(admin)/cargar-alumno' as any) },
+        { icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => router.push('/(admin)/cargar-docente' as any) },
+        { icon: 'domain', label: 'Cargar Curso / División', onPress: () => router.push('/(admin)/cargar-curso' as any) },
+        { icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => router.push('/(admin)/reportes' as any) },
+        { icon: 'settings', label: 'Configuración del Sistema' },
+    ];
 
-    const handleReportPress = () => {
-        console.log('Ver reporte presionado');
+    const handleLogout = () => {
+        router.replace('/');
     };
 
     return (
         <SafeAreaView style={styles.safeArea} edges={['top']}>
             <AdminHeader
                 nombreAdmin="Fabricio"
-                onMenuPress={handleMenuPress}
-                onNotificationsPress={handleNotificationsPress}
-                onAvatarPress={handleAvatarPress}
+                onMenuPress={() => setDrawerVisible(true)}
+                onNotificationsPress={() => {}}
+                onAvatarPress={() => router.push('/(admin)/perfil')}
             />
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 <View style={styles.titleSection}>
@@ -62,9 +64,20 @@ export default function AdminDashboard() {
                     description="Esta semana se registraron 12 alertas de inasistencias reiteradas. Se recomienda revisar el reporte y notificar a los tutores correspondientes."
                     buttonText="Ver Reporte Detallado"
                     icon="assignment-late"
-                    onButtonPress={handleReportPress}
+                    onButtonPress={() => router.push('/(admin)/reportes' as any)}
                 />
             </ScrollView>
+
+            <DrawerMenu
+                visible={drawerVisible}
+                onClose={() => setDrawerVisible(false)}
+                nombre="Admin Usuario"
+                rol="Administrador"
+                rolColor={Colors.primary}
+                items={drawerItems}
+                activeLabel="Panel Principal"
+                onLogout={handleLogout}
+            />
         </SafeAreaView>
     );
 }
