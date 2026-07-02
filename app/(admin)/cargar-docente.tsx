@@ -1,6 +1,7 @@
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { OutlinedButton } from '@/components/atoms/OutlinedButton';
-import { CustomInput } from '@/components/atoms/CustomInput';
+import { Input } from '@/components/atoms/Input';
+import { FormField } from '@/components/molecules/FormField';
 import SubjectsSelector from '@/components/molecules/SubjectsSelector';
 import TurnoSelector from '@/components/molecules/TurnoSelector';
 import { Colors } from '@/constants/Colors';
@@ -71,22 +72,25 @@ export default function CargarDocenteScreen() {
               <MaterialIcons name="person-outline" size={16} color={Colors.secondary} />
               <Text style={styles.sectionLabel}>INFORMACIÓN PERSONAL</Text>
             </View>
-            <CustomInput
-              label="Nombre completo"
-              iconName="person-outline"
-              placeholder="Ej: María González"
-              value={nombre}
-              onChangeText={setNombre}
-              autoCapitalize="words"
-            />
-            <CustomInput
-              label="DNI / Identificación"
-              iconName="badge"
-              placeholder="Ej: 30123456"
-              value={dni}
-              onChangeText={setDni}
-              keyboardType="numeric"
-            />
+            <FormField label="Nombre completo">
+              <Input
+                iconName="person-outline"
+                placeholder="Ej: María González"
+                value={nombre}
+                onChangeText={setNombre}
+                autoCapitalize="words"
+              />
+            </FormField>
+
+            <FormField label="DNI / Identificación">
+              <Input
+                iconName="badge"
+                placeholder="Ej: 30123456"
+                value={dni}
+                onChangeText={setDni}
+                keyboardType="numeric"
+              />
+            </FormField>
           </View>
 
           <View style={styles.section}>
@@ -94,23 +98,27 @@ export default function CargarDocenteScreen() {
               <MaterialIcons name="contact-mail" size={16} color={Colors.secondary} />
               <Text style={styles.sectionLabel}>CONTACTO</Text>
             </View>
-            <CustomInput
-              label="Email Institucional"
-              iconName="mail-outline"
-              placeholder="docente@escuela.edu.ar"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <CustomInput
-              label="Teléfono"
-              iconName="phone"
-              placeholder="Ej: +54 9 11 1234-5678"
-              value={telefono}
-              onChangeText={setTelefono}
-              keyboardType="phone-pad"
-            />
+
+            <FormField label="Email Institucional">
+              <Input
+                iconName="mail-outline"
+                placeholder="docente@escuela.edu.ar"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </FormField>
+
+            <FormField label="Teléfono">
+              <Input
+                iconName="phone"
+                placeholder="Ej: +54 9 11 1234-5678"
+                value={telefono}
+                onChangeText={setTelefono}
+                keyboardType="phone-pad"
+              />
+            </FormField>
           </View>
 
           <SubjectsSelector selected={materias} onChange={setMaterias} />
