@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { ActividadItem } from '@/components/molecules/ActividadItem';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -16,12 +16,18 @@ interface Actividad {
 interface ActividadesListProps {
   actividades: Actividad[];
   onItemPress?: (id: string) => void;
+  onVerTodas?: () => void;
 }
 
-export const ActividadesList = ({ actividades, onItemPress }: ActividadesListProps) => {
+export const ActividadesList = ({ actividades, onItemPress, onVerTodas }: ActividadesListProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Próximas Actividades</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>PRÓXIMAS ACTIVIDADES</Text>
+        <TouchableOpacity activeOpacity={0.7} onPress={onVerTodas}>
+          <Text style={styles.verTodas}>Ver todas</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.list}>
         {actividades.map((item) => (
           <ActividadItem
@@ -41,14 +47,26 @@ export const ActividadesList = ({ actividades, onItemPress }: ActividadesListPro
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 8,
+    paddingTop: 16,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 8,
   },
   title: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
-    color: Colors.neutral,
-    paddingHorizontal: 20,
-    marginBottom: 12,
+    color: Colors.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  verTodas: {
+    fontSize: 14,
+    color: Colors.primary,
+    fontWeight: '600',
   },
   list: {
     paddingHorizontal: 20,

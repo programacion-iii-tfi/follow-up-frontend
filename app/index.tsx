@@ -1,18 +1,43 @@
 import { Colors } from '@/constants/Colors';
-import { CustomInput } from '@/components/atoms/CustomInput';
+import { Input } from '@/components/atoms/Input';
+import { FormField } from '@/components/molecules/FormField';
 import { OutlinedButton } from '@/components/atoms/OutlinedButton';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+type Rol = 'admin' | 'tutor' | 'docente' | 'alumno';
+
+interface RolOption {
+  id: Rol;
+  label: string;
+  icon: keyof typeof MaterialIcons.glyphMap;
+  route: string;
+}
+
+const ROL_OPTIONS: RolOption[] = [
+  { id: 'admin', label: 'Admin', icon: 'admin-panel-settings', route: '/(admin)/index' },
+  { id: 'tutor', label: 'Tutor', icon: 'family-restroom', route: '/(tutor)/index' },
+  { id: 'docente', label: 'Docente', icon: 'school', route: '/(docente)/index' },
+  { id: 'alumno', label: 'Alumno', icon: 'menu-book', route: '/(alumno)/index' },
+];
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rolSeleccionado, setRolSeleccionado] = useState<Rol>('tutor');
+
+  const handleAcceder = () => {
+    const opcion = ROL_OPTIONS.find((r) => r.id === rolSeleccionado);
+    if (opcion) {
+      router.push(opcion.route as any);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -32,27 +57,54 @@ export default function LoginScreen() {
           <View style={styles.card}>
             <Text style={styles.title}>Bienvenido</Text>
             <Text style={styles.subtitle}>Ingresa tus credenciales para continuar</Text>
-            <CustomInput
-              label="Usuario"
-              iconName="person-outline"
-              placeholder="your@email.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <CustomInput
-              label="Contraseña"
-              iconName="lock-outline"
-              placeholder="********"
-              value={password}
-              onChangeText={setPassword}
-              isPassword
-            />
+            <FormField label="Usuario">
+              <Input
+                iconName="person-outline"
+                placeholder="your@email.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </FormField>
+
+            <FormField label="Contraseña">
+              <Input
+                iconName="lock-outline"
+                placeholder="********"
+                value={password}
+                onChangeText={setPassword}
+                isPassword
+              />
+            </FormField>
+            <Text style={styles.rolLabel}>Ingresar como</Text>
+            <View style={styles.rolGrid}>
+              {ROL_OPTIONS.map((opcion) => {
+                const activo = rolSeleccionado === opcion.id;
+                return (
+                  <TouchableOpacity
+                    key={opcion.id}
+                    style={[styles.rolCard, activo && styles.rolCardActivo]}
+                    onPress={() => setRolSeleccionado(opcion.id)}
+                    activeOpacity={0.7}
+                  >
+                    <MaterialIcons
+                      name={opcion.icon}
+                      size={22}
+                      color={activo ? Colors.primary : Colors.secondary}
+                    />
+                    <Text style={[styles.rolCardText, activo && styles.rolCardTextActivo]}>
+                      {opcion.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
             <View style={styles.accederRow}>
               <PrimaryButton
                 title="Acceder"
-                onPress={() => router.push('/(tutor)/index' as any)}
+                onPress={handleAcceder}
                 style={styles.accederButton}
               />
             </View>
@@ -113,6 +165,46 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.secondary,
     marginBottom: 24,
+  },
+  rolLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.secondary,
+    letterSpacing: 0.5,
+    marginBottom: 10,
+    marginTop: 4,
+  },
+  rolGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 20,
+  },
+  rolCard: {
+    flex: 1,
+    minWidth: '45%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.white,
+  },
+  rolCardActivo: {
+    borderColor: Colors.primary,
+    backgroundColor: `${Colors.primary}10`,
+  },
+  rolCardText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: Colors.secondary,
+  },
+  rolCardTextActivo: {
+    color: Colors.primary,
+    fontWeight: '700',
   },
   accederRow: {
     flexDirection: 'row',

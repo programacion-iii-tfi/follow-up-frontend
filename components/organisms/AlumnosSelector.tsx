@@ -17,7 +17,7 @@ interface AlumnosSelectorProps {
 export const AlumnosSelector = ({ alumnos, selectedId, onSelect }: AlumnosSelectorProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mis Alumnos</Text>
+      <Text style={styles.title}>ALUMNO/S</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -38,14 +38,16 @@ export const AlumnosSelector = ({ alumnos, selectedId, onSelect }: AlumnosSelect
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 8,
+    paddingTop: 16,
   },
   title: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '700',
-    color: Colors.neutral,
+    color: Colors.secondary,
     paddingHorizontal: 20,
-    marginBottom: 12,
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   scroll: {
     paddingHorizontal: 20,

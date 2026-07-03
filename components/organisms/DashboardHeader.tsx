@@ -5,18 +5,24 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface DashboardHeaderProps {
   nombreTutor: string;
+  onMenuPress?: () => void;
   onNotificationsPress?: () => void;
   onAvatarPress?: () => void;
 }
 
-export const DashboardHeader = ({ nombreTutor, onNotificationsPress, onAvatarPress }: DashboardHeaderProps) => {
+export const DashboardHeader = ({ nombreTutor, onMenuPress, onNotificationsPress, onAvatarPress }: DashboardHeaderProps) => {
   const initials = nombreTutor.charAt(0).toUpperCase();
 
   return (
     <View style={styles.header}>
       <View style={styles.left}>
-        <Text style={styles.logo}>FollowUp</Text>
-        <Text style={styles.greeting}>Hola, {nombreTutor}</Text>
+        <TouchableOpacity style={styles.menuButton} activeOpacity={0.7} onPress={onMenuPress}>
+          <MaterialIcons name="menu" size={26} color={Colors.neutral} />
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.logo}>FollowUp</Text>
+          <Text style={styles.greeting}>Hola, {nombreTutor}</Text>
+        </View>
       </View>
       <View style={styles.right}>
         <TouchableOpacity style={styles.iconButton} activeOpacity={0.7} onPress={onNotificationsPress}>
@@ -41,7 +47,12 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   left: {
-    gap: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  menuButton: {
+    padding: 4,
   },
   logo: {
     fontSize: 20,
