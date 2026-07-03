@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Colors';
-import { CustomInput } from '@/components/atoms/CustomInput';
+import { Input } from '@/components/atoms/Input';
+import { FormField } from '@/components/molecules/FormField';
 import { OutlinedButton } from '@/components/atoms/OutlinedButton';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -56,24 +57,26 @@ export default function LoginScreen() {
           <View style={styles.card}>
             <Text style={styles.title}>Bienvenido</Text>
             <Text style={styles.subtitle}>Ingresa tus credenciales para continuar</Text>
-            <CustomInput
-              label="Usuario"
-              iconName="person-outline"
-              placeholder="your@email.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <CustomInput
-              label="Contraseña"
-              iconName="lock-outline"
-              placeholder="********"
-              value={password}
-              onChangeText={setPassword}
-              isPassword
-            />
+            <FormField label="Usuario">
+              <Input
+                iconName="person-outline"
+                placeholder="your@email.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </FormField>
 
+            <FormField label="Contraseña">
+              <Input
+                iconName="lock-outline"
+                placeholder="********"
+                value={password}
+                onChangeText={setPassword}
+                isPassword
+              />
+            </FormField>
             <Text style={styles.rolLabel}>Ingresar como</Text>
             <View style={styles.rolGrid}>
               {ROL_OPTIONS.map((opcion) => {

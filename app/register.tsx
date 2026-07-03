@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Colors';
-import { CustomInput } from '@/components/atoms/CustomInput';
+import { Input } from '@/components/atoms/Input';
+import { FormField } from '@/components/molecules/FormField';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -29,39 +30,46 @@ export default function RegisterScreen() {
         </View>
         <Text style={styles.subtitle}>Ingresa tus datos para registrarte en FollowUp</Text>
         <View style={styles.card}>
-          <CustomInput
-            label="Nombre y Apellido"
-            iconName="person-outline"
-            placeholder="Ej. Damian Ramirez"
-            value={fullName}
-            onChangeText={setFullName}
-            autoCapitalize="words"
-          />
-          <CustomInput
-            label="Correo Electrónico"
-            iconName="mail-outline"
-            placeholder="email@ejemplo.com"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <CustomInput
-            label="DNI del Alumno"
-            iconName="badge"
-            placeholder="12.345.678"
-            value={studentId}
-            onChangeText={setStudentId}
-            keyboardType="numeric"
-          />
-          <CustomInput
-            label="Contraseña"
-            iconName="lock-outline"
-            placeholder="*********"
-            value={password}
-            onChangeText={setPassword}
-            isPassword
-          />
+          <FormField label="Nombre y Apellido">
+            <Input
+              iconName="person-outline"
+              placeholder="Ej. Damian Ramirez"
+              value={fullName}
+              onChangeText={setFullName}
+              autoCapitalize="words"
+            />
+          </FormField>
+
+          <FormField label="Correo Electrónico">
+            <Input
+              iconName="mail-outline"
+              placeholder="email@ejemplo.com"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </FormField>
+
+          <FormField label="DNI del Alumno">
+            <Input
+              iconName="badge"
+              placeholder="12.345.678"
+              value={studentId}
+              onChangeText={setStudentId}
+              keyboardType="numeric"
+            />
+          </FormField>
+
+          <FormField label="Contraseña">
+            <Input
+              iconName="lock-outline"
+              placeholder="*********"
+              value={password}
+              onChangeText={setPassword}
+              isPassword
+            />
+          </FormField>
           <PrimaryButton
             title="Registrarse"
             onPress={() => console.log('registro solicitado:', { fullName, email, studentId, password })}

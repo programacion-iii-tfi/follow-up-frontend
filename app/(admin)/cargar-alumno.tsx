@@ -1,4 +1,5 @@
-import { CustomInput } from '@/components/atoms/CustomInput';
+import { Input } from '@/components/atoms/Input';
+import { FormField } from '@/components/molecules/FormField';
 import { OutlinedButton } from '@/components/atoms/OutlinedButton';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import SelectInput from '@/components/atoms/SelectInput';
@@ -76,30 +77,37 @@ export default function CargarAlumnoScreen() {
           </Text>
 
           <View style={styles.form}>
-            <CustomInput
-              label="Nombre completo"
-              iconName="person-outline"
-              placeholder="Ej: Lucas Pérez"
-              value={nombre}
-              onChangeText={setNombre}
-              autoCapitalize="words"
-            />
-            <CustomInput
-              label="DNI"
-              iconName="badge"
-              placeholder="Ej: 45123456"
-              value={dni}
-              onChangeText={setDni}
-              keyboardType="numeric"
-            />
-            <CustomInput
-              label="Fecha de nacimiento"
-              iconName="calendar-today"
-              placeholder="dd/mm/yyyy"
-              value={fechaNacimiento}
-              onChangeText={setFechaNacimiento}
-              keyboardType="numeric"
-            />
+            <FormField label="Nombre completo">
+              <Input
+                iconName="person-outline"
+                placeholder="Ej: Lucas Pérez"
+                value={nombre}
+                onChangeText={setNombre}
+                autoCapitalize="words"
+              />
+            </FormField>
+
+            <FormField label="DNI">
+              <Input
+                iconName="badge"
+                placeholder="Ej: 45123456"
+                value={dni}
+                onChangeText={setDni}
+                keyboardType="numeric"
+              />
+            </FormField>
+
+            <FormField label="Fecha de nacimiento">
+              <Input
+                iconName="calendar-today"
+                placeholder="dd/mm/yyyy"
+                value={fechaNacimiento}
+                onChangeText={setFechaNacimiento}
+                keyboardType="numeric"
+              />
+            </FormField>
+
+
             <SelectInput
               label="Curso / División"
               iconName="school"
@@ -108,15 +116,17 @@ export default function CargarAlumnoScreen() {
               options={CURSOS}
               onChange={setCurso}
             />
-            <CustomInput
-              label="Email institucional"
-              iconName="mail-outline"
-              placeholder="alumno@escuela.edu.ar"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+
+            <FormField label="Email institucional">
+              <Input
+                iconName="mail-outline"
+                placeholder="alumno@escuela.edu.ar"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </FormField>
           </View>
 
           <View style={styles.tutorSection}>
@@ -124,22 +134,25 @@ export default function CargarAlumnoScreen() {
           </View>
 
           <View style={styles.form}>
-            <CustomInput
-              label="Nombre del tutor/padre"
-              iconName="person-outline"
-              placeholder="Ej: Roberto Pérez"
-              value={nombreTutor}
-              onChangeText={setNombreTutor}
-              autoCapitalize="words"
-            />
-            <CustomInput
-              label="Teléfono de contacto"
-              iconName="phone"
-              placeholder="Ej: +54 9 11 1234-5678"
-              value={telefonoContacto}
-              onChangeText={setTelefonoContacto}
-              keyboardType="phone-pad"
-            />
+            <FormField label="Nombre del tutor/padre">
+              <Input
+                iconName="person-outline"
+                placeholder="Ej: Roberto Pérez"
+                value={nombreTutor}
+                onChangeText={setNombreTutor}
+                autoCapitalize="words"
+              />
+            </FormField>
+
+            <FormField label="Teléfono de contacto">
+              <Input
+                iconName="phone"
+                placeholder="Ej: +54 9 11 1234-5678"
+                value={telefonoContacto}
+                onChangeText={setTelefonoContacto}
+                keyboardType="phone-pad"
+              />
+            </FormField>
           </View>
 
           <View style={styles.altaCard}>

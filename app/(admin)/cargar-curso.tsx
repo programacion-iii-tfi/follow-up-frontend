@@ -1,4 +1,5 @@
-import { CustomInput } from '@/components/atoms/CustomInput';
+import { Input } from '@/components/atoms/Input';
+import { FormField } from '@/components/molecules/FormField';
 import { OutlinedButton } from '@/components/atoms/OutlinedButton';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import SelectInput from '@/components/atoms/SelectInput';
@@ -106,14 +107,15 @@ export default function CargarCursoScreen() {
               options={DOCENTES}
               onChange={setDocente}
             />
-            <CustomInput
-              label="Capacidad máxima de alumnos"
-              iconName="groups"
-              placeholder="Ej: 30"
-              value={capacidad}
-              onChangeText={setCapacidad}
-              keyboardType="numeric"
-            />
+            <FormField label="Capacidad máxima de alumnos">
+              <Input
+                iconName="groups"
+                placeholder="Ej: 30"
+                value={capacidad}
+                onChangeText={setCapacidad}
+                keyboardType="numeric"
+              />
+            </FormField>
           </View>
 
           <View style={styles.hintsRow}>
