@@ -145,7 +145,14 @@ export default function MateriasScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={[styles.listContent, { paddingBottom: Math.max(insets.bottom, 16) + 88 }]}
             renderItem={({ item }) => (
-              <View style={styles.materiaCard}>
+              <TouchableOpacity 
+                style={styles.materiaCard}
+                activeOpacity={0.8}
+                onPress={() => router.push({
+                  pathname: '/(docente)/materia/[id]' as any,
+                  params: { id: item.id, nombre: item.nombre, curso: item.subtitulo }
+                })}
+              >
                 <View style={styles.cardHeader}>
                   <View style={[styles.categoriaChip, { backgroundColor: item.categoriaBg }]}>
                     <Text style={[styles.categoriaChipText, { color: item.categoriaColor }]}>
@@ -193,15 +200,11 @@ export default function MateriasScreen() {
                       <Text style={styles.avatarMoreText}>+{item.alumnosCount - item.alumnosAvatars.length}</Text>
                     </View>
                   </View>
-                  <TouchableOpacity
-                    style={styles.actionArrow}
-                    onPress={() => router.push({ pathname: '/(docente)/asistencia', params: { m: item.nombre } })}
-                    activeOpacity={0.7}
-                  >
+                  <View style={styles.actionArrow}>
                     <MaterialIcons name="arrow-forward" size={18} color={PRIMARY} />
-                  </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             )}
           />
         </View>
