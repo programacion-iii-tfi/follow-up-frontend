@@ -48,7 +48,7 @@ export default function TutorDashboard() {
   ];
 
   const handleLogout = () => {
-    if (router.dismissAll) { router.dismissAll(); } router.replace({ pathname: '/' });
+    router.replace('/');
   };
 
   return (

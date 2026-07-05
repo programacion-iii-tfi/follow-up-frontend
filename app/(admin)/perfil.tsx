@@ -9,7 +9,7 @@ export default function PerfilAdminScreen() {
   const router = useRouter();
 
   const handleLogout = () => {
-    if (router.dismissAll) { router.dismissAll(); } router.replace({ pathname: '/' });
+    router.replace('/');
   };
 
   const metricas: ProfileMetric[] = [

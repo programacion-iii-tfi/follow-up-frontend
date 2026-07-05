@@ -41,7 +41,7 @@ export default function AdminDashboard() {
     ];
 
     const handleLogout = () => {
-        if (router.dismissAll) { router.dismissAll(); } router.replace({ pathname: '/' });
+        router.replace('/');
     };
 
     return (

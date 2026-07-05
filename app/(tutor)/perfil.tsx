@@ -11,7 +11,7 @@ export default function PerfilTutorScreen() {
   const insets = useSafeAreaInsets();
 
   const handleLogout = () => {
-    if (router.dismissAll) { router.dismissAll(); } router.replace({ pathname: '/' });
+    router.replace('/');
   };
 
   const metricas: ProfileMetric[] = [
