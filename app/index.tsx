@@ -31,11 +31,32 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rolSeleccionado, setRolSeleccionado] = useState<Rol>('tutor');
+  const [errores, setErrores] = useState({ email: '', password: '' });
 
   const handleAcceder = () => {
-    const opcion = ROL_OPTIONS.find((r) => r.id === rolSeleccionado);
-    if (opcion) {
-      router.push(opcion.route as any);
+    let valid = true;
+    let nuevosErrores = { email: '', password: '' };
+
+    if (!email.trim()) {
+      nuevosErrores.email = 'El correo electrónico es requerido';
+      valid = false;
+    } else if (!email.includes('@')) {
+      nuevosErrores.email = 'El formato del correo es inválido';
+      valid = false;
+    }
+
+    if (!password) {
+      nuevosErrores.password = 'La contraseña es requerida';
+      valid = false;
+    }
+
+    setErrores(nuevosErrores);
+
+    if (valid) {
+      const opcion = ROL_OPTIONS.find((r) => r.id === rolSeleccionado);
+      if (opcion) {
+        router.replace(opcion.route as any);
+      }
     }
   };
 
@@ -57,7 +78,7 @@ export default function LoginScreen() {
           <View style={styles.card}>
             <Text style={styles.title}>Bienvenido</Text>
             <Text style={styles.subtitle}>Ingresa tus credenciales para continuar</Text>
-            <FormField label="Usuario">
+            <FormField label="Usuario" errorMessage={errores.email}>
               <Input
                 iconName="person-outline"
                 placeholder="your@email.com"
@@ -68,7 +89,7 @@ export default function LoginScreen() {
               />
             </FormField>
 
-            <FormField label="Contraseña">
+            <FormField label="Contraseña" errorMessage={errores.password}>
               <Input
                 iconName="lock-outline"
                 placeholder="********"
@@ -108,10 +129,14 @@ export default function LoginScreen() {
                 style={styles.accederButton}
               />
             </View>
-            <View style={styles.forgotPasswordContainer}>
+            <TouchableOpacity 
+              style={styles.forgotPasswordContainer}
+              onPress={() => router.push('/recuperar-password')}
+              activeOpacity={0.7}
+            >
               <MaterialIcons name="help-outline" size={16} color={Colors.primary} />
               <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
-            </View>
+            </TouchableOpacity>
           </View>
           <View style={styles.registerContainer}>
             <OutlinedButton title="Registrarse" onPress={() => router.push('/register')} />

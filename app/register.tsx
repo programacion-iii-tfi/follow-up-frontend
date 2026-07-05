@@ -14,6 +14,51 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
+  
+  const [errores, setErrores] = useState({
+    fullName: '',
+    email: '',
+    studentId: '',
+    password: ''
+  });
+
+  const handleRegister = () => {
+    let valid = true;
+    let nuevosErrores = { fullName: '', email: '', studentId: '', password: '' };
+
+    if (!fullName.trim()) {
+      nuevosErrores.fullName = 'El nombre es requerido';
+      valid = false;
+    }
+
+    if (!email.trim()) {
+      nuevosErrores.email = 'El correo electrónico es requerido';
+      valid = false;
+    } else if (!email.includes('@')) {
+      nuevosErrores.email = 'El formato del correo es inválido';
+      valid = false;
+    }
+
+    if (!studentId.trim()) {
+      nuevosErrores.studentId = 'El DNI es requerido';
+      valid = false;
+    }
+
+    if (!password) {
+      nuevosErrores.password = 'La contraseña es requerida';
+      valid = false;
+    } else if (password.length < 6) {
+      nuevosErrores.password = 'La contraseña debe tener al menos 6 caracteres';
+      valid = false;
+    }
+
+    setErrores(nuevosErrores);
+
+    if (valid) {
+      console.log('registro solicitado:', { fullName, email, studentId, password });
+      // Aquí irá la llamada a la API
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -30,51 +75,51 @@ export default function RegisterScreen() {
         </View>
         <Text style={styles.subtitle}>Ingresa tus datos para registrarte en FollowUp</Text>
         <View style={styles.card}>
-          <FormField label="Nombre y Apellido">
-            <Input
-              iconName="person-outline"
-              placeholder="Ej. Damian Ramirez"
-              value={fullName}
-              onChangeText={setFullName}
-              autoCapitalize="words"
-            />
-          </FormField>
+          <FormField label="Nombre Completo del Tutor" errorMessage={errores.fullName}>
+              <Input
+                iconName="person-outline"
+                placeholder="Juan Pérez"
+                value={fullName}
+                onChangeText={setFullName}
+                autoCapitalize="words"
+              />
+            </FormField>
 
-          <FormField label="Correo Electrónico">
-            <Input
-              iconName="mail-outline"
-              placeholder="email@ejemplo.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </FormField>
+          <FormField label="Correo Electrónico" errorMessage={errores.email}>
+              <Input
+                iconName="mail-outline"
+                placeholder="email@ejemplo.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </FormField>
 
-          <FormField label="DNI del Alumno">
-            <Input
-              iconName="badge"
-              placeholder="12.345.678"
-              value={studentId}
-              onChangeText={setStudentId}
-              keyboardType="numeric"
-            />
-          </FormField>
+          <FormField label="DNI del Alumno" errorMessage={errores.studentId}>
+              <Input
+                iconName="badge"
+                placeholder="12.345.678"
+                value={studentId}
+                onChangeText={setStudentId}
+                keyboardType="numeric"
+              />
+            </FormField>
 
-          <FormField label="Contraseña">
-            <Input
-              iconName="lock-outline"
-              placeholder="*********"
-              value={password}
-              onChangeText={setPassword}
-              isPassword
-            />
-          </FormField>
+          <FormField label="Contraseña" errorMessage={errores.password}>
+              <Input
+                iconName="lock-outline"
+                placeholder="*********"
+                value={password}
+                onChangeText={setPassword}
+                isPassword
+              />
+            </FormField>
           <PrimaryButton
-            title="Registrarse"
-            onPress={() => console.log('registro solicitado:', { fullName, email, studentId, password })}
-            style={styles.registerButton}
-          />
+              title="Registrarse"
+              onPress={handleRegister}
+              style={styles.registerButton}
+            />
         </View>
         <TouchableOpacity
           style={styles.loginLinkContainer}
