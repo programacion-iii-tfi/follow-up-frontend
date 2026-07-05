@@ -22,7 +22,9 @@ export default function AdminDashboard() {
 
     const modulosData: ModuloItemData[] = [
         { id: '1', icon: 'person-add', label: 'Cargar Alumno', onPress: () => router.push('/(admin)/cargar-alumno' as any) },
+        { id: '5', icon: 'people', label: 'Listado de Alumnos', onPress: () => router.push('/(admin)/listado-alumnos' as any) },
         { id: '2', icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => router.push('/(admin)/cargar-docente' as any) },
+        { id: '6', icon: 'school', label: 'Listado de Docentes', onPress: () => router.push('/(admin)/listado-docentes' as any) },
         { id: '3', icon: 'domain', label: 'Cargar Curso / División', onPress: () => router.push('/(admin)/cargar-curso' as any) },
         { id: '4', icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => router.push('/(admin)/reportes' as any) },
     ];
@@ -30,7 +32,9 @@ export default function AdminDashboard() {
     const drawerItems: DrawerMenuItem[] = [
         { icon: 'dashboard', label: 'Panel Principal' },
         { icon: 'person-add', label: 'Cargar Alumno', onPress: () => router.push('/(admin)/cargar-alumno' as any) },
+        { icon: 'people', label: 'Listado de Alumnos', onPress: () => router.push('/(admin)/listado-alumnos' as any) },
         { icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => router.push('/(admin)/cargar-docente' as any) },
+        { icon: 'school', label: 'Listado de Docentes', onPress: () => router.push('/(admin)/listado-docentes' as any) },
         { icon: 'domain', label: 'Cargar Curso / División', onPress: () => router.push('/(admin)/cargar-curso' as any) },
         { icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => router.push('/(admin)/reportes' as any) },
         { icon: 'settings', label: 'Configuración del Sistema' },
