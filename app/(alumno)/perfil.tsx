@@ -9,7 +9,7 @@ export default function PerfilAlumnoScreen() {
   const router = useRouter();
 
   const handleLogout = () => {
-    router.replace('/');
+    if (router.dismissAll) { router.dismissAll(); } router.replace({ pathname: '/' });
   };
 
   const metricas: ProfileMetric[] = [

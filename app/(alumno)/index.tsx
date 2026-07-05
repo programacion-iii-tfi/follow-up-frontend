@@ -30,7 +30,7 @@ export default function AlumnoDashboard() {
   ];
 
   const handleLogout = () => {
-    router.replace('/');
+    if (router.dismissAll) { router.dismissAll(); } router.replace({ pathname: '/' });
   };
 
   return (
