@@ -48,7 +48,7 @@ export default function TutorDashboard() {
   ];
 
   const handleLogout = () => {
-    router.replace('/');
+    router.replace('/login');
   };
 
   return (

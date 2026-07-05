@@ -85,11 +85,7 @@ export default function DrawerMenu({
   }, [visible, translateX, overlayOpacity]);
 
   const handleLogout = () => {
-    onClose();
-    // Wait for the modal to close before navigating to avoid router conflicts
-    setTimeout(() => {
-      onLogout();
-    }, 250);
+    onLogout();
   };
 
   return (

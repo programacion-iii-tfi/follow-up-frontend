@@ -13,7 +13,7 @@ export default function PerfilDocenteScreen() {
   const insets = useSafeAreaInsets();
 
   const handleLogout = () => {
-    router.replace('/');
+    router.replace('/login');
   };
 
   const metricas: ProfileMetric[] = [

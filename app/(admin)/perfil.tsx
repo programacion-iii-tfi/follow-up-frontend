@@ -9,7 +9,7 @@ export default function PerfilAdminScreen() {
   const router = useRouter();
 
   const handleLogout = () => {
-    router.replace('/');
+    router.replace('/login');
   };
 
   const metricas: ProfileMetric[] = [

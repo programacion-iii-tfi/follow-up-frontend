@@ -11,7 +11,7 @@ export default function PerfilTutorScreen() {
   const insets = useSafeAreaInsets();
 
   const handleLogout = () => {
-    router.replace('/');
+    router.replace('/login');
   };
 
   const metricas: ProfileMetric[] = [
