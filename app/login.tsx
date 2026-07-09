@@ -10,27 +10,13 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-type Rol = 'admin' | 'tutor' | 'docente' | 'alumno';
 
-interface RolOption {
-  id: Rol;
-  label: string;
-  icon: keyof typeof MaterialIcons.glyphMap;
-  route: string;
-}
 
-const ROL_OPTIONS: RolOption[] = [
-  { id: 'admin', label: 'Admin', icon: 'admin-panel-settings', route: '/(admin)/index' },
-  { id: 'tutor', label: 'Tutor', icon: 'family-restroom', route: '/(tutor)/index' },
-  { id: 'docente', label: 'Docente', icon: 'school', route: '/(docente)/index' },
-  { id: 'alumno', label: 'Alumno', icon: 'menu-book', route: '/(alumno)/index' },
-];
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rolSeleccionado, setRolSeleccionado] = useState<Rol>('tutor');
   const [errores, setErrores] = useState({ email: '', password: '' });
 
   const handleAcceder = () => {
@@ -53,10 +39,7 @@ export default function LoginScreen() {
     setErrores(nuevosErrores);
 
     if (valid) {
-      const opcion = ROL_OPTIONS.find((r) => r.id === rolSeleccionado);
-      if (opcion) {
-        router.replace(opcion.route as any);
-      }
+      router.replace('/_sitemap' as any);
     }
   };
 
@@ -98,30 +81,6 @@ export default function LoginScreen() {
                 isPassword
               />
             </FormField>
-            <Text style={styles.rolLabel}>Ingresar como</Text>
-            <View style={styles.rolGrid}>
-              {ROL_OPTIONS.map((opcion) => {
-                const activo = rolSeleccionado === opcion.id;
-                return (
-                  <TouchableOpacity
-                    key={opcion.id}
-                    style={[styles.rolCard, activo && styles.rolCardActivo]}
-                    onPress={() => setRolSeleccionado(opcion.id)}
-                    activeOpacity={0.7}
-                  >
-                    <MaterialIcons
-                      name={opcion.icon}
-                      size={22}
-                      color={activo ? Colors.primary : Colors.secondary}
-                    />
-                    <Text style={[styles.rolCardText, activo && styles.rolCardTextActivo]}>
-                      {opcion.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-
             <View style={styles.accederRow}>
               <PrimaryButton
                 title="Acceder"
@@ -129,7 +88,7 @@ export default function LoginScreen() {
                 style={styles.accederButton}
               />
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.forgotPasswordContainer}
               onPress={() => router.push('/recuperar-password')}
               activeOpacity={0.7}
@@ -139,7 +98,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
           <View style={styles.registerContainer}>
-            <OutlinedButton title="Registrarse" onPress={() => router.push('/register')} />
+            <OutlinedButton title="Soy Tutor" onPress={() => router.push('/register')} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -190,33 +149,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.secondary,
     marginBottom: 24,
-  },
-  rolLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: Colors.secondary,
-    letterSpacing: 0.5,
-    marginBottom: 10,
-    marginTop: 4,
-  },
-  rolGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 20,
-  },
-  rolCard: {
-    flex: 1,
-    minWidth: '45%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: Colors.white,
   },
   rolCardActivo: {
     borderColor: Colors.primary,
