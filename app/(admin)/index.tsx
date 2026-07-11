@@ -26,7 +26,6 @@ export default function AdminDashboard() {
         { id: '2', icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => router.push('/(admin)/cargar-docente' as any) },
         { id: '6', icon: 'school', label: 'Listado de Docentes', onPress: () => router.push('/(admin)/listado-docentes' as any) },
         { id: '3', icon: 'domain', label: 'Cargar Curso / División', onPress: () => router.push('/(admin)/cargar-curso' as any) },
-        { id: '4', icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => router.push('/(admin)/reportes' as any) },
     ];
 
     const drawerItems: DrawerMenuItem[] = [
@@ -36,7 +35,6 @@ export default function AdminDashboard() {
         { icon: 'supervisor-account', label: 'Cargar Docente', onPress: () => router.push('/(admin)/cargar-docente' as any) },
         { icon: 'school', label: 'Listado de Docentes', onPress: () => router.push('/(admin)/listado-docentes' as any) },
         { icon: 'domain', label: 'Cargar Curso / División', onPress: () => router.push('/(admin)/cargar-curso' as any) },
-        { icon: 'assessment', label: 'Reportes y Estadísticas', onPress: () => router.push('/(admin)/reportes' as any) },
         { icon: 'settings', label: 'Configuración del Sistema' },
     ];
 
@@ -49,7 +47,7 @@ export default function AdminDashboard() {
             <AdminHeader
                 nombreAdmin="Fabricio"
                 onMenuPress={() => setDrawerVisible(true)}
-                onNotificationsPress={() => {}}
+                onNotificationsPress={() => { }}
                 onAvatarPress={() => router.push('/(admin)/perfil')}
             />
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -63,13 +61,6 @@ export default function AdminDashboard() {
 
                 <ModulosList modulos={modulosData} />
 
-                <ResumenCard
-                    title="Alertas Críticas Recientes"
-                    description="Esta semana se registraron 12 alertas de inasistencias reiteradas. Se recomienda revisar el reporte y notificar a los tutores correspondientes."
-                    buttonText="Ver Reporte Detallado"
-                    icon="assignment-late"
-                    onButtonPress={() => router.push('/(admin)/reportes' as any)}
-                />
             </ScrollView>
 
             <DrawerMenu

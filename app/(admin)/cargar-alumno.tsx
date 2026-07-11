@@ -5,7 +5,7 @@ import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import SelectInput from '@/components/atoms/SelectInput';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -24,7 +24,8 @@ const TURNOS = ['Mañana', 'Tarde'];
 
 export default function CargarAlumnoScreen() {
   const router = useRouter();
-
+  const { edit } = useLocalSearchParams<{ edit?: string }>();
+  const isEditing = edit === 'true';
   // Alumno
   const [apellido, setApellido] = useState('');
   const [nombre, setNombre] = useState('');
@@ -69,7 +70,9 @@ export default function CargarAlumnoScreen() {
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()} activeOpacity={0.7}>
           <MaterialIcons name="arrow-back" size={24} color={Colors.neutral} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Cargar Alumno</Text>
+        <Text style={styles.headerTitle}>
+          {isEditing ? 'Editar Alumno' : 'Cargar Alumno'}
+        </Text>
         <View style={styles.avatarSmall}>
           <MaterialIcons name="person" size={18} color={Colors.onPrimary} />
         </View>
@@ -141,7 +144,7 @@ export default function CargarAlumnoScreen() {
           </View>
           <View style={styles.actions}>
             <PrimaryButton
-              title="Guardar Alumno"
+              title={isEditing ? 'Guardar Cambios' : 'Guardar Alumno'}
               onPress={handleGuardar}
               isLoading={isLoading}
               style={styles.primaryBtn}

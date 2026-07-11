@@ -2,11 +2,10 @@ import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import { OutlinedButton } from '@/components/atoms/OutlinedButton';
 import { Input } from '@/components/atoms/Input';
 import { FormField } from '@/components/molecules/FormField';
-import SubjectsSelector from '@/components/molecules/SubjectsSelector';
-import TurnoSelector from '@/components/molecules/TurnoSelector';
+import SelectInput from '@/components/atoms/SelectInput';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -18,17 +17,41 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import ValidationCard from '@/components/molecules/ValidationCard';
+const MATERIAS = ['Matemáticas', 'Prácticas del Lenguaje', 'Ciencias Naturales', 'Ciencias Sociales', 'Educación Física', 'Inglés', 'Arte'];
+const GRADOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const DIVISIONES = ['1', '2', '3', '4', '5', 'A', 'B', 'C', 'D', 'E'];
+const TURNOS = ['Mañana', 'Tarde'];
 export default function CargarDocenteScreen() {
   const router = useRouter();
-
+  // Extraemos la señal para saber si estamos editando
+  const { edit } = useLocalSearchParams<{ edit?: string }>();
+  const isEditing = edit === 'true';
+  // Datos Personales
+  const [apellido, setApellido] = useState('');
   const [nombre, setNombre] = useState('');
   const [dni, setDni] = useState('');
+
+  // Contacto y Asignaciones
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
-  const [materias, setMaterias] = useState<string[]>([]);
+  const [materia, setMateria] = useState(''); // Ahora es un texto simple
+  const [grado, setGrado] = useState('');
+  const [division, setDivision] = useState('');
   const [turno, setTurno] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Lógica de validación dinámica
+  const isFormularioCompleto =
+    apellido.trim() !== '' &&
+    nombre.trim() !== '' &&
+    dni.trim() !== '' &&
+    email.trim() !== '' &&
+    telefono.trim() !== '' &&
+    materia !== '' &&
+    grado !== '' &&
+    division !== '' &&
+    turno !== '';
 
   const handleGuardar = () => {
     setIsLoading(true);
@@ -37,14 +60,15 @@ export default function CargarDocenteScreen() {
       router.back();
     }, 1500);
   };
-
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()} activeOpacity={0.7}>
           <MaterialIcons name="arrow-back" size={24} color={Colors.neutral} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Cargar Docente</Text>
+        <Text style={styles.headerTitle}>
+          {isEditing ? 'Editar Docente' : 'Cargar Docente'}
+        </Text>
         <View style={styles.avatarSmall}>
           <MaterialIcons name="person" size={18} color={Colors.onPrimary} />
         </View>
@@ -60,22 +84,26 @@ export default function CargarDocenteScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.heroBanner}>
-            <Text style={styles.heroTitle}>Nuevo Perfil</Text>
-            <Text style={styles.heroSubtitle}>
-              Completá la información para integrar al nuevo docente al equipo institucional.
-            </Text>
-          </View>
 
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <MaterialIcons name="person-outline" size={16} color={Colors.secondary} />
               <Text style={styles.sectionLabel}>INFORMACIÓN PERSONAL</Text>
             </View>
-            <FormField label="Nombre completo">
+            <FormField label="Apellido">
               <Input
                 iconName="person-outline"
-                placeholder="Ej: María González"
+                placeholder="Ej: González"
+                value={apellido}
+                onChangeText={setApellido}
+                autoCapitalize="words"
+              />
+            </FormField>
+
+            <FormField label="Nombre">
+              <Input
+                iconName="person-outline"
+                placeholder="Ej: María"
                 value={nombre}
                 onChangeText={setNombre}
                 autoCapitalize="words"
@@ -99,7 +127,7 @@ export default function CargarDocenteScreen() {
               <Text style={styles.sectionLabel}>CONTACTO</Text>
             </View>
 
-            <FormField label="Email Institucional">
+            <FormField label="Email docente">
               <Input
                 iconName="mail-outline"
                 placeholder="docente@escuela.edu.ar"
@@ -120,14 +148,21 @@ export default function CargarDocenteScreen() {
               />
             </FormField>
           </View>
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <MaterialIcons name="school" size={16} color={Colors.secondary} />
+              <Text style={styles.sectionLabel}>ASIGNACIÓN ACADÉMICA</Text>
+            </View>
 
-          <SubjectsSelector selected={materias} onChange={setMaterias} />
-
-          <TurnoSelector selected={turno} onChange={setTurno} />
-
+            <SelectInput label="Materia que dicta" iconName="menu-book" placeholder="Seleccionar materia..." value={materia} options={MATERIAS} onChange={setMateria} />
+            <SelectInput label="Grado / Año asignado" iconName="school" placeholder="Seleccionar grado..." value={grado} options={GRADOS} onChange={setGrado} />
+            <SelectInput label="División" iconName="class" placeholder="Seleccionar división..." value={division} options={DIVISIONES} onChange={setDivision} />
+            <SelectInput label="Turno" iconName="schedule" placeholder="Seleccionar turno..." value={turno} options={TURNOS} onChange={setTurno} />
+          </View>
           <View style={styles.actions}>
+            <ValidationCard isValid={isFormularioCompleto} />
             <PrimaryButton
-              title="Guardar Docente"
+              title={isEditing ? 'Guardar Cambios' : 'Guardar Docente'}
               onPress={handleGuardar}
               isLoading={isLoading}
               style={styles.primaryBtn}
