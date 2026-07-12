@@ -40,13 +40,18 @@ export default function CargarCursoScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Lógica de validación dinámica
-  const isFormularioCompleto =
-    grado !== '' &&
-    division !== '' &&
-    turno !== '' &&
-    capacidad.trim() !== '';
+  const obtenerErrores = () => {
+    const errs: string[] = [];
+    if (!grado || !division || !turno || !capacidad.trim()) {
+      errs.push('Faltan completar campos obligatorios');
+    }
+    return errs;
+  };
+
+  const erroresFormulario = obtenerErrores();
 
   const handleGuardar = () => {
+    if (erroresFormulario.length > 0) return;
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -133,7 +138,7 @@ export default function CargarCursoScreen() {
           </View>
 
           <View style={styles.actions}>
-            <ValidationCard isValid={isFormularioCompleto} />
+            <ValidationCard errors={erroresFormulario} />
             <PrimaryButton
               title="Guardar Curso"
               onPress={handleGuardar}

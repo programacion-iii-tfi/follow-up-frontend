@@ -9,7 +9,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { esEmailValido } from '@/utils/validations';
 
 
 
@@ -26,7 +26,7 @@ export default function LoginScreen() {
     if (!email.trim()) {
       nuevosErrores.email = 'El correo electrónico es requerido';
       valid = false;
-    } else if (!email.includes('@')) {
+    } else if (!esEmailValido(email)) { // <--- Usamos nuestra nueva función central
       nuevosErrores.email = 'El formato del correo es inválido';
       valid = false;
     }
@@ -42,7 +42,6 @@ export default function LoginScreen() {
       router.replace('/_sitemap' as any);
     }
   };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -98,7 +97,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
           <View style={styles.registerContainer}>
-            <OutlinedButton title="Soy Tutor" onPress={() => router.push('/register')} />
+            <OutlinedButton title="Soy Tutor" onPress={() => router.push('/validar-codigo' as any)} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
