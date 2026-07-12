@@ -7,7 +7,7 @@ import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import {
+import { esNombreValido, esDniValido, esEmailValido, esTelefonoValido } from '@/utils/validations'; import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -42,18 +42,29 @@ export default function CargarDocenteScreen() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Lógica de validación dinámica
-  const isFormularioCompleto =
-    apellido.trim() !== '' &&
-    nombre.trim() !== '' &&
-    dni.trim() !== '' &&
-    email.trim() !== '' &&
-    telefono.trim() !== '' &&
-    materia !== '' &&
-    grado !== '' &&
-    division !== '' &&
-    turno !== '';
+  // Lógica de validación dinámica detallada
+  const obtenerErrores = () => {
+    const errs: string[] = [];
+
+    // 1. Revisamos campos vacíos
+    if (!apellido || !nombre || !dni || !email || !telefono || !materia || !grado || !division || !turno) {
+      errs.push('Faltan completar campos obligatorios');
+    }
+
+    // 2. Revisamos formatos incorrectos (solo si están escritos)
+    if (apellido && !esNombreValido(apellido)) errs.push('El apellido solo puede contener letras');
+    if (nombre && !esNombreValido(nombre)) errs.push('El nombre solo puede contener letras');
+    if (dni && !esDniValido(dni)) errs.push('El DNI debe tener entre 7 y 8 números');
+    if (email && !esEmailValido(email)) errs.push('El correo no tiene un formato válido');
+    if (telefono && !esTelefonoValido(telefono)) errs.push('El teléfono tiene un formato inválido');
+
+    return errs;
+  };
+
+  const erroresFormulario = obtenerErrores();
 
   const handleGuardar = () => {
+    if (erroresFormulario.length > 0) return;
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -160,7 +171,7 @@ export default function CargarDocenteScreen() {
             <SelectInput label="Turno" iconName="schedule" placeholder="Seleccionar turno..." value={turno} options={TURNOS} onChange={setTurno} />
           </View>
           <View style={styles.actions}>
-            <ValidationCard isValid={isFormularioCompleto} />
+            <ValidationCard errors={erroresFormulario} />
             <PrimaryButton
               title={isEditing ? 'Guardar Cambios' : 'Guardar Docente'}
               onPress={handleGuardar}
