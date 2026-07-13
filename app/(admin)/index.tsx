@@ -2,23 +2,84 @@ import AdminHeader from '@/components/organisms/AdminHeader';
 import DrawerMenu, { DrawerMenuItem } from '@/components/organisms/DrawerMenu';
 import EstadoGrid, { StatCardData } from '@/components/organisms/EstadoGrid';
 import ModulosList, { ModuloItemData } from '@/components/organisms/ModulosList';
-import ResumenCard from '@/components/organisms/ResumenCard';
 import { Colors } from '@/constants/Colors';
-import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { clearSession, getSession, nombreCompleto, Session } from '@/utils/session';
+import { useFocusEffect, useRouter } from 'expo-router';
+import React, { useCallback, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { API_BASE_URL } from '@/config/api';
 
-const statsData: StatCardData[] = [
-    { id: '1', label: 'Alumnos', value: '450', icon: 'people', iconColor: '#6750A4' },
-    { id: '2', label: 'Docentes', value: '28/30', icon: 'school', iconColor: '#625B71' },
-    { id: '3', label: 'Asistencia', value: '94%', icon: 'check-circle', iconColor: '#386A20' },
-    { id: '4', label: 'Alertas', value: '5% (Normal)', icon: 'warning', iconColor: '#B3261E', valueColor: '#B3261E' },
-];
 
 export default function AdminDashboard() {
     const router = useRouter();
     const [drawerVisible, setDrawerVisible] = useState(false);
+    const [session, setSession] = useState<Session | null>(null);
+    const [loadingSession, setLoadingSession] = useState(true);
+    const [statsData, setStatsData] = useState<StatCardData[]>([
+        { id: '1', label: 'Alumnos', value: '0', icon: 'people', iconColor: '#6750A4' },
+        { id: '2', label: 'Tutores', value: '0', icon: 'supervisor-account', iconColor: '#625B71' },
+    ]);
+
+    useFocusEffect(
+        
+        useCallback(() => {
+            let activo = true;
+
+            (async () => {
+                const s = await getSession();
+
+            if (!activo) return;
+
+            if (!s || s.rol !== 'administrador') {
+                router.replace('/login');
+                return;
+            }
+
+            setSession(s);
+
+            const response = await fetch(
+                `${API_BASE_URL}/admins/estadisticas`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${s.token}`,
+                        Accept: 'application/json',
+                    },
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+
+                setStatsData([
+                    {
+                        id: '1',
+                        label: 'Alumnos',
+                        value: data.total_alumnos.toString(),
+                        icon: 'people',
+                        iconColor: '#6750A4',
+                    },
+                    {
+                        id: '2',
+                        label: 'Tutores',
+                        value: data.total_tutores.toString(),
+                        icon: 'supervisor-account',
+                        iconColor: '#625B71',
+                    },
+                ]);
+            }
+
+            setLoadingSession(false);
+            })();
+
+            return () => {
+                activo = false;
+            };
+        }, [router])
+
+        
+    );
 
     const modulosData: ModuloItemData[] = [
         { id: '1', icon: 'person-add', label: 'Cargar Alumno', onPress: () => router.push('/(admin)/cargar-alumno' as any) },
@@ -38,14 +99,26 @@ export default function AdminDashboard() {
         { icon: 'settings', label: 'Configuración del Sistema' },
     ];
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        // TODO: si el backend tiene endpoint de logout (revocar token Sanctum),
+        // llamarlo acá antes de limpiar la sesión local:
+        // await fetch(`${API_BASE_URL}/logout`, { method: 'POST', headers: { Authorization: `Bearer ${session?.token}` } });
+        await clearSession();
         router.replace('/login');
     };
+
+    if (loadingSession || !session) {
+        return (
+            <SafeAreaView style={styles.loadingContainer} edges={['top']}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.safeArea} edges={['top']}>
             <AdminHeader
-                nombreAdmin="Fabricio"
+                nombreAdmin={session.first_name}
                 onMenuPress={() => setDrawerVisible(true)}
                 onNotificationsPress={() => { }}
                 onAvatarPress={() => router.push('/(admin)/perfil')}
@@ -66,7 +139,7 @@ export default function AdminDashboard() {
             <DrawerMenu
                 visible={drawerVisible}
                 onClose={() => setDrawerVisible(false)}
-                nombre="Admin Usuario"
+                nombre={nombreCompleto(session)}
                 rol="Administrador"
                 rolColor={Colors.primary}
                 items={drawerItems}
@@ -81,6 +154,12 @@ const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
         backgroundColor: Colors.background,
+    },
+    loadingContainer: {
+        flex: 1,
+        backgroundColor: Colors.background,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     scrollContent: {
         paddingBottom: 24,

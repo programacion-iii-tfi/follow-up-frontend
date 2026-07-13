@@ -1,15 +1,21 @@
 import { Input } from '@/components/atoms/Input';
-import { FormField } from '@/components/molecules/FormField';
 import { OutlinedButton } from '@/components/atoms/OutlinedButton';
 import { PrimaryButton } from '@/components/atoms/PrimaryButton';
-import SelectInput from '@/components/atoms/SelectInput';
+import SelectInput, { SelectOption } from '@/components/atoms/SelectInput';
+import { FormField } from '@/components/molecules/FormField';
 import { Colors } from '@/constants/Colors';
-import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import React, { useState } from 'react';
-import ValidationCard from '@/components/molecules/ValidationCard';
-import { esNombreValido, esDniValido, esTelefonoValido, esFormatoFechaValido, esEdadAlumnoValida } from '@/utils/validations';
 import {
+  buscarTutorPorDni,
+  crearAlumno,
+  getCursosDivisionTurno,
+} from '@/services/alumnoService';
+import { CreateAlumnoRequest, TutorAlumnoRelation } from '@/types/alumno';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -20,147 +26,430 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const GRADOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const DIVISIONES = ['1', '2', '3', '4', '5', 'A', 'B', 'C', 'D', 'E'];
-const TURNOS = ['Mañana', 'Tarde'];
+const OPCIONES_PARENTESCO: SelectOption[] = [
+  { label: 'Padre', value: 'padre' },
+  { label: 'Madre', value: 'madre' },
+  { label: 'Otra', value: 'otra' },
+];
+
+const FECHA_REGEX = /^(\d{2})[/-](\d{2})[/-](\d{4})$/;
+
+/** Convierte 'dd/mm/yyyy' o 'dd-mm-yyyy' -> 'yyyy-mm-dd' (formato ISO que espera el backend). */
+function fechaAIso(fecha: string): string {
+  const [, dd, mm, yyyy] = fecha.match(FECHA_REGEX) ?? [];
+  return `${dd}/${mm}/${yyyy}`; // Retorna en formato ISO: yyyy-mm-dd
+}
+
+/** Valida que la fecha ingresada sea una fecha real (no solo el formato). */
+function esFechaValida(fecha: string): boolean {
+  const match = fecha.match(FECHA_REGEX);
+  if (!match) return false;
+
+  const [, dd, mm, yyyy] = match;
+  const dia = Number(dd);
+  const mes = Number(mm);
+  const anio = Number(yyyy);
+
+  const fechaObj = new Date(anio, mes - 1, dia);
+  return (
+    fechaObj.getFullYear() === anio &&
+    fechaObj.getMonth() === mes - 1 &&
+    fechaObj.getDate() === dia
+  );
+}
+
+type Errores = {
+  firstName?: string;
+  lastName?: string;
+  dni?: string;
+  fechaNacimiento?: string;
+  curso?: string;
+  tutorDni?: string;
+  tutorFirstName?: string;
+  tutorLastName?: string;
+  relationship?: string;
+  otraRelacion?: string;
+};
 
 export default function CargarAlumnoScreen() {
   const router = useRouter();
-  const { edit } = useLocalSearchParams<{ edit?: string }>();
-  const isEditing = edit === 'true';
-  // Alumno
-  const [apellido, setApellido] = useState('');
-  const [nombre, setNombre] = useState('');
+
+  // Datos del alumno
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [dni, setDni] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [cursoDivisionTurnoId, setCursoDivisionTurnoId] = useState<number | null>(null);
 
-  // Escuela
-  const [grado, setGrado] = useState('');
-  const [division, setDivision] = useState('');
-  const [turno, setTurno] = useState('');
+  // Curso / División / Turno
+  const [cursoOptions, setCursoOptions] = useState<SelectOption[]>([]);
+  const [loadingCursos, setLoadingCursos] = useState(true);
+  const [errorCursos, setErrorCursos] = useState('');
 
   // Tutor
-  const [apellidoTutor, setApellidoTutor] = useState('');
-  const [nombreTutor, setNombreTutor] = useState('');
-  const [telefonoContacto, setTelefonoContacto] = useState('');
+  const [tutorDni, setTutorDni] = useState('');
+  const [tutorFirstName, setTutorFirstName] = useState('');
+  const [tutorLastName, setTutorLastName] = useState('');
+  const [tutorTelephone, setTutorTelephone] = useState('');
+  const [tutorEncontrado, setTutorEncontrado] = useState(false);
+  const [tutorBuscado, setTutorBuscado] = useState(false);
+  const [loadingTutor, setLoadingTutor] = useState(false);
+  const [errorTutor, setErrorTutor] = useState('');
 
-  const [isLoading, setIsLoading] = useState(false);
+  // Relación
+  const [relationship, setRelationship] = useState<TutorAlumnoRelation | null>(null);
+  const [otraRelacion, setOtraRelacion] = useState('');
 
-  // Lógica de validación dinámica (Para el recuadro final)
-  // Lógica de validación dinámica estricta
-  // Lógica de validación dinámica detallada
-  const obtenerErrores = () => {
-    const errs: string[] = [];
+  // Envío
+  const [saving, setSaving] = useState(false);
+  const [errorGeneral, setErrorGeneral] = useState('');
+  const [errores, setErrores] = useState<Errores>({});
 
-    if (!apellido || !nombre || !dni || !fechaNacimiento.trim() || !grado || !division || !turno || !apellidoTutor || !nombreTutor || !telefonoContacto) {
-      errs.push('Faltan completar campos obligatorios');
-    }
+  useEffect(() => {
+    (async () => {
+      setLoadingCursos(true);
+      setErrorCursos('');
 
-    if (apellido && !esNombreValido(apellido)) errs.push('El apellido del alumno solo puede contener letras');
-    if (nombre && !esNombreValido(nombre)) errs.push('El nombre del alumno solo puede contener letras');
-    if (dni && !esDniValido(dni)) errs.push('El DNI debe tener entre 7 y 8 números');
-    if (fechaNacimiento && !esFormatoFechaValido(fechaNacimiento)) {
-      errs.push('La fecha debe tener formato DD/MM/YYYY (Ej: 15/04/2010)');
-    } else if (fechaNacimiento && !esEdadAlumnoValida(fechaNacimiento)) {
-      errs.push('El alumno debe tener entre 5 y 20 años');
-    }
-    if (apellidoTutor && !esNombreValido(apellidoTutor)) errs.push('El apellido del tutor solo puede contener letras');
-    if (nombreTutor && !esNombreValido(nombreTutor)) errs.push('El nombre del tutor solo puede contener letras');
-    if (telefonoContacto && !esTelefonoValido(telefonoContacto)) errs.push('El teléfono tiene un formato inválido');
+      try {
+        const cursos = await getCursosDivisionTurno();
+        setCursoOptions(
+          cursos.map((c) => ({
+            label: `${c.curso}° ${c.division} - ${c.turno}`,
+            value: c.id,
+          }))
+        );
+      } catch (error) {
+        setErrorCursos('No se pudieron cargar los cursos');
+      } finally {
+        setLoadingCursos(false);
+      }
+    })();
+  }, []);
 
-    return errs;
+  const limpiarDatosTutor = () => {
+    setTutorFirstName('');
+    setTutorLastName('');
+    setTutorTelephone('');
+    setTutorEncontrado(false);
   };
 
-  const erroresFormulario = obtenerErrores();
-  const handleGuardar = () => {
-    if (erroresFormulario.length > 0) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      router.back();
-    }, 1500);
+  const handleBuscarTutor = async () => {
+    setErrorTutor('');
+
+    if (!tutorDni.trim()) {
+      setErrores((prev) => ({ ...prev, tutorDni: 'Ingresá el DNI del tutor' }));
+      return;
+    }
+
+    setErrores((prev) => ({ ...prev, tutorDni: undefined }));
+    setLoadingTutor(true);
+    setTutorBuscado(false);
+
+    try {
+      const tutor = await buscarTutorPorDni(tutorDni.trim());
+
+      if (tutor) {
+        setTutorFirstName(tutor.first_name);
+        setTutorLastName(tutor.last_name);
+        setTutorTelephone(tutor.telephone);
+        setTutorEncontrado(true);
+      } else {
+        limpiarDatosTutor();
+        setTutorEncontrado(false);
+      }
+
+      setTutorBuscado(true);
+    } catch (error) {
+      setErrorTutor('Error al buscar el tutor. Intenta nuevamente.');
+      limpiarDatosTutor();
+    } finally {
+      setLoadingTutor(false);
+    }
+  };
+
+  // Si cambia el DNI del tutor después de haber buscado, invalidamos el resultado
+  // anterior para que no se pueda enviar con datos de un tutor distinto sin re-buscar.
+  const handleChangeTutorDni = (value: string) => {
+    setTutorDni(value);
+    if (tutorBuscado) {
+      setTutorBuscado(false);
+      setTutorEncontrado(false);
+      limpiarDatosTutor();
+    }
+  };
+
+  const validarCampos = (): boolean => {
+    const nuevosErrores: Errores = {};
+
+    if (!firstName.trim()) nuevosErrores.firstName = 'El nombre es requerido';
+    if (!lastName.trim()) nuevosErrores.lastName = 'El apellido es requerido';
+
+    if (!dni.trim()) {
+      nuevosErrores.dni = 'El DNI es requerido';
+    } else if (!/^\d+$/.test(dni.trim())) {
+      nuevosErrores.dni = 'El DNI debe ser numérico';
+    }
+
+    if (!fechaNacimiento.trim()) {
+      nuevosErrores.fechaNacimiento = 'La fecha de nacimiento es requerida';
+    } else if (!esFechaValida(fechaNacimiento.trim())) {
+      nuevosErrores.fechaNacimiento = 'Formato esperado: DD/MM/AAAA';
+    }
+
+    if (!cursoDivisionTurnoId) {
+      nuevosErrores.curso = 'Seleccioná un curso';
+    }
+
+    if (!tutorDni.trim()) {
+      nuevosErrores.tutorDni = 'El DNI del tutor es requerido';
+    } else if (!/^\d+$/.test(tutorDni.trim())) {
+      nuevosErrores.tutorDni = 'El DNI del tutor debe ser numérico';
+    }
+
+    // Si el tutor no existía en el sistema, los datos se cargan a mano y son obligatorios.
+    if (!tutorEncontrado) {
+      if (!tutorFirstName.trim()) nuevosErrores.tutorFirstName = 'El nombre del tutor es requerido';
+      if (!tutorLastName.trim()) nuevosErrores.tutorLastName = 'El apellido del tutor es requerido';
+    }
+
+    if (!relationship) {
+      nuevosErrores.relationship = 'Seleccioná el parentesco';
+    } else if (relationship === 'otra' && !otraRelacion.trim()) {
+      nuevosErrores.otraRelacion = 'Especificá la relación';
+    }
+
+    setErrores(nuevosErrores);
+    return Object.values(nuevosErrores).every((v) => !v);
+  };
+
+  const handleGuardar = async () => {
+    setErrorGeneral('');
+
+    if (!validarCampos()) {
+      return;
+    }
+
+    const request: CreateAlumnoRequest = {
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      dni: Number(dni.trim()),
+      fecha_nacimiento: fechaAIso(fechaNacimiento.trim()),
+      curso_division_turno_id: cursoDivisionTurnoId as number,
+      relationship: relationship as TutorAlumnoRelation,
+      otra_relacion: relationship === 'otra' ? otraRelacion.trim() : null,
+      tutor_dni: Number(tutorDni.trim()),
+      // Si el tutor ya existe, el backend decide la rama por tutor_first_name === null:
+      // mandar el nombre acá (aunque sea el mismo) haría que intente crear un tutor nuevo.
+      tutor_first_name: tutorEncontrado ? null : tutorFirstName.trim(),
+      tutor_last_name: tutorEncontrado ? null : tutorLastName.trim(),
+      tutor_telephone: tutorEncontrado ? null : tutorTelephone.trim() || null,
+    };
+
+    setSaving(true);
+
+    try {
+      await crearAlumno(request);
+      Alert.alert('Alumno cargado', 'El alumno se registró correctamente.', [
+        { text: 'OK', onPress: () => router.back() },
+      ]);
+    } catch (error: any) {
+      setErrorGeneral(error?.message ?? 'No fue posible crear el alumno.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()} activeOpacity={0.7}>
+        <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
           <MaterialIcons name="arrow-back" size={24} color={Colors.neutral} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          {isEditing ? 'Editar Alumno' : 'Cargar Alumno'}
-        </Text>
-        <View style={styles.avatarSmall}>
-          <MaterialIcons name="person" size={18} color={Colors.onPrimary} />
-        </View>
+        <Text style={styles.headerTitle}>Cargar Alumno</Text>
+        <View style={{ width: 24 }} />
       </View>
 
       <KeyboardAvoidingView
-        style={styles.flex}
+        style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <Text style={styles.subtitle}>
-            Completá la información del estudiante para darlo de alta en el sistema.
-          </Text>
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+          {errorGeneral ? (
+            <View style={styles.errorGeneralContainer}>
+              <MaterialIcons name="error-outline" size={16} color={Colors.error ?? '#D32F2F'} />
+              <Text style={styles.errorGeneralText}>{errorGeneral}</Text>
+            </View>
+          ) : null}
 
-          <View style={styles.form}>
-            <FormField label="Apellido del alumno">
-              <Input iconName="person-outline" placeholder="Ej: Pérez" value={apellido} onChangeText={setApellido} autoCapitalize="words" />
-            </FormField>
+          <Text style={styles.sectionTitle}>Datos del alumno</Text>
 
-            <FormField label="Nombre del alumno">
-              <Input iconName="person-outline" placeholder="Ej: Lucas" value={nombre} onChangeText={setNombre} autoCapitalize="words" />
-            </FormField>
-
-            <FormField label="DNI">
-              <Input iconName="badge" placeholder="Ej: 45123456" value={dni} onChangeText={setDni} keyboardType="numeric" />
-            </FormField>
-
-            <FormField label="Fecha de nacimiento">
-              <Input iconName="calendar-today" placeholder="dd/mm/yyyy" value={fechaNacimiento} onChangeText={setFechaNacimiento} keyboardType="numeric" />
-            </FormField>
-
-            {/* Nuevos Selectores Separados */}
-            <SelectInput label="Grado / Año" iconName="school" placeholder="Seleccionar grado..." value={grado} options={GRADOS} onChange={setGrado} />
-            <SelectInput label="División" iconName="class" placeholder="Seleccionar división..." value={division} options={DIVISIONES} onChange={setDivision} />
-            <SelectInput label="Turno" iconName="schedule" placeholder="Seleccionar turno..." value={turno} options={TURNOS} onChange={setTurno} />
-          </View>
-          <View style={styles.tutorSection}>
-            <Text style={styles.tutorSectionTitle}>Información del Tutor</Text>
-          </View>
-
-          <View style={styles.form}>
-            <FormField label="Apellido del tutor/padre">
-              <Input iconName="person-outline" placeholder="Ej: Pérez" value={apellidoTutor} onChangeText={setApellidoTutor} autoCapitalize="words" />
-            </FormField>
-
-            <FormField label="Nombre del tutor/padre">
-              <Input iconName="person-outline" placeholder="Ej: Roberto" value={nombreTutor} onChangeText={setNombreTutor} autoCapitalize="words" />
-            </FormField>
-
-            <FormField label="Teléfono de contacto">
-              <Input iconName="phone" placeholder="Ej: +54 9 11 1234-5678" value={telefonoContacto} onChangeText={setTelefonoContacto} keyboardType="phone-pad" />
-            </FormField>
-          </View>
-
-          <ValidationCard errors={erroresFormulario} />
-          <View style={styles.actions}>
-            <PrimaryButton
-              title={isEditing ? 'Guardar Cambios' : 'Guardar Alumno'}
-              onPress={handleGuardar}
-              isLoading={isLoading}
-              style={styles.primaryBtn}
+          <FormField label="Nombre" errorMessage={errores.firstName}>
+            <Input
+              iconName="person-outline"
+              placeholder="Nombre"
+              value={firstName}
+              onChangeText={setFirstName}
+              editable={!saving}
             />
-            <OutlinedButton
-              title="Cancelar"
-              onPress={() => router.back()}
-              style={styles.outlinedBtn}
+          </FormField>
+
+          <FormField label="Apellido" errorMessage={errores.lastName}>
+            <Input
+              iconName="person-outline"
+              placeholder="Apellido"
+              value={lastName}
+              onChangeText={setLastName}
+              editable={!saving}
+            />
+          </FormField>
+
+          <FormField label="DNI" errorMessage={errores.dni}>
+            <Input
+              iconName="badge"
+              placeholder="DNI"
+              value={dni}
+              onChangeText={setDni}
+              keyboardType="number-pad"
+              editable={!saving}
+            />
+          </FormField>
+
+          <FormField label="Fecha de nacimiento" errorMessage={errores.fechaNacimiento}>
+            <Input
+              iconName="calendar-today"
+              placeholder="DD/MM/AAAA"
+              value={fechaNacimiento}
+              onChangeText={setFechaNacimiento}
+              keyboardType="numbers-and-punctuation"
+              editable={!saving}
+            />
+          </FormField>
+
+          {loadingCursos ? (
+            <View style={styles.inlineLoading}>
+              <ActivityIndicator size="small" color={Colors.primary} />
+              <Text style={styles.inlineLoadingText}>Cargando cursos...</Text>
+            </View>
+          ) : errorCursos ? (
+            <Text style={styles.errorGeneralText}>{errorCursos}</Text>
+          ) : (
+            <>
+              <SelectInput
+                label="Curso / División / Turno"
+                iconName="domain"
+                options={cursoOptions}
+                value={cursoDivisionTurnoId}
+                onChange={(value) => setCursoDivisionTurnoId(value as number)}
+              />
+              {errores.curso ? <Text style={styles.fieldError}>{errores.curso}</Text> : null}
+            </>
+          )}
+
+          <Text style={styles.sectionTitle}>Datos del tutor</Text>
+
+          <FormField label="DNI del tutor" errorMessage={errores.tutorDni}>
+            <View style={styles.tutorDniRow}>
+              <View style={styles.tutorDniInput}>
+                <Input
+                  iconName="badge"
+                  placeholder="DNI del tutor"
+                  value={tutorDni}
+                  onChangeText={handleChangeTutorDni}
+                  keyboardType="number-pad"
+                  editable={!saving && !loadingTutor}
+                />
+              </View>
+              <TouchableOpacity
+                style={[styles.buscarButton, (saving || loadingTutor) && styles.buscarButtonDisabled]}
+                onPress={handleBuscarTutor}
+                disabled={saving || loadingTutor}
+                activeOpacity={0.8}
+              >
+                {loadingTutor ? (
+                  <ActivityIndicator size="small" color={Colors.white ?? '#FFF'} />
+                ) : (
+                  <Text style={styles.buscarButtonText}>Buscar</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </FormField>
+
+          {errorTutor ? <Text style={styles.fieldError}>{errorTutor}</Text> : null}
+
+          {tutorBuscado && !tutorEncontrado && !errorTutor ? (
+            <View style={styles.infoBanner}>
+              <MaterialIcons name="info-outline" size={16} color={Colors.secondary} />
+              <Text style={styles.infoBannerText}>
+                No se encontró un tutor con ese DNI. Completá sus datos manualmente.
+              </Text>
+            </View>
+          ) : null}
+
+          {tutorEncontrado ? (
+            <View style={styles.infoBanner}>
+              <MaterialIcons name="check-circle" size={16} color={Colors.primary} />
+              <Text style={styles.infoBannerText}>Tutor encontrado. Datos autocompletados.</Text>
+            </View>
+          ) : null}
+
+          <FormField label="Nombre del tutor" errorMessage={errores.tutorFirstName}>
+            <Input
+              iconName="person-outline"
+              placeholder="Nombre del tutor"
+              value={tutorFirstName}
+              onChangeText={setTutorFirstName}
+              editable={!saving && !tutorEncontrado}
+            />
+          </FormField>
+
+          <FormField label="Apellido del tutor" errorMessage={errores.tutorLastName}>
+            <Input
+              iconName="person-outline"
+              placeholder="Apellido del tutor"
+              value={tutorLastName}
+              onChangeText={setTutorLastName}
+              editable={!saving && !tutorEncontrado}
+            />
+          </FormField>
+
+          <FormField label="Teléfono del tutor">
+            <Input
+              iconName="phone"
+              placeholder="Teléfono del tutor"
+              value={tutorTelephone}
+              onChangeText={setTutorTelephone}
+              keyboardType="phone-pad"
+              editable={!saving && !tutorEncontrado}
+            />
+          </FormField>
+
+          <SelectInput
+            label="Parentesco"
+            iconName="diversity-1"
+            options={OPCIONES_PARENTESCO}
+            value={relationship}
+            onChange={(value) => setRelationship(value as TutorAlumnoRelation)}
+          />
+          {errores.relationship ? <Text style={styles.fieldError}>{errores.relationship}</Text> : null}
+
+          {relationship === 'otra' ? (
+            <FormField label="Otra relación" errorMessage={errores.otraRelacion}>
+              <Input
+                iconName="edit"
+                placeholder="Especificar relación"
+                value={otraRelacion}
+                onChangeText={setOtraRelacion}
+                editable={!saving}
+              />
+            </FormField>
+          ) : null}
+
+          <View style={styles.actionsRow}>
+            <OutlinedButton title="Cancelar" onPress={() => router.back()} />
+            <PrimaryButton
+              title={saving ? 'Guardando...' : 'Guardar'}
+              onPress={handleGuardar}
+              style={styles.guardarButton}
             />
           </View>
         </ScrollView>
@@ -174,117 +463,108 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  flex: {
-    flex: 1,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 14,
-    backgroundColor: Colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.surfaceVariant,
-  },
-  backButton: {
-    padding: 4,
+    paddingVertical: 12,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: Colors.neutral,
-    flex: 1,
-    marginLeft: 12,
   },
-  avatarSmall: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: Colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scroll: {
+  keyboardView: {
     flex: 1,
   },
   scrollContent: {
     padding: 20,
     paddingBottom: 40,
   },
-  subtitle: {
-    fontSize: 13,
-    color: Colors.secondary,
-    lineHeight: 18,
-    marginBottom: 24,
-  },
-  form: {
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.neutral,
+    marginTop: 8,
     marginBottom: 8,
   },
-  tutorSection: {
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  tutorSectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.primary,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: `${Colors.primary}10`,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  altaCard: {
+  errorGeneralContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: `${Colors.primary}10`,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    gap: 12,
+    gap: 6,
+    backgroundColor: `${Colors.error ?? '#D32F2F'}15`,
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 16,
   },
-  altaCardContent: {
+  errorGeneralText: {
+    color: Colors.error ?? '#D32F2F',
+    fontSize: 13,
+    fontWeight: '500',
+    flexShrink: 1,
+  },
+  fieldError: {
+    color: Colors.error ?? '#D32F2F',
+    fontSize: 12,
+    marginTop: -12,
+    marginBottom: 12,
+  },
+  inlineLoading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+  },
+  inlineLoadingText: {
+    fontSize: 13,
+    color: Colors.secondary,
+  },
+  tutorDniRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  tutorDniInput: {
     flex: 1,
   },
-  altaCardTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.primary,
-    marginBottom: 4,
+  buscarButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  altaCardDescription: {
+  buscarButtonDisabled: {
+    opacity: 0.6,
+  },
+  buscarButtonText: {
+    color: Colors.white ?? '#FFF',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  infoBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 6,
+    backgroundColor: `${Colors.primary}0D`,
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 16,
+  },
+  infoBannerText: {
     fontSize: 12,
     color: Colors.secondary,
-    lineHeight: 16,
+    flex: 1,
   },
-  dniCard: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: `${Colors.error}10`,
-    borderRadius: 16,
-    paddingVertical: 20,
-    marginBottom: 28,
-  },
-  dniCardText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.error,
-  },
-  actions: {
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     gap: 12,
+    marginTop: 16,
   },
-  primaryBtn: {
-    borderRadius: 24,
-  },
-  outlinedBtn: {
-    borderRadius: 24,
-  },
-  formValido: {
-    backgroundColor: '#E8F5E9',
-  },
-  formInvalido: {
-    backgroundColor: `${Colors.error}10`,
+  guardarButton: {
+    minWidth: 140,
   },
 });

@@ -18,10 +18,45 @@ import { esNombreValido, esDniValido, esEmailValido, esTelefonoValido } from '@/
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ValidationCard from '@/components/molecules/ValidationCard';
-const MATERIAS = ['Matemáticas', 'Prácticas del Lenguaje', 'Ciencias Naturales', 'Ciencias Sociales', 'Educación Física', 'Inglés', 'Arte'];
-const GRADOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const DIVISIONES = ['1', '2', '3', '4', '5', 'A', 'B', 'C', 'D', 'E'];
-const TURNOS = ['Mañana', 'Tarde'];
+const MATERIAS = [
+  { label: 'Matemáticas', value: 'Matemáticas' },
+  { label: 'Prácticas del Lenguaje', value: 'Prácticas del Lenguaje' },
+  { label: 'Ciencias Naturales', value: 'Ciencias Naturales' },
+  { label: 'Ciencias Sociales', value: 'Ciencias Sociales' },
+  { label: 'Educación Física', value: 'Educación Física' },
+  { label: 'Inglés', value: 'Inglés' },
+  { label: 'Arte', value: 'Arte' },
+];
+
+const GRADOS = [
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+  { label: '4', value: '4' },
+  { label: '5', value: '5' },
+  { label: '6', value: '6' },
+  { label: '7', value: '7' },
+  { label: '8', value: '8' },
+  { label: '9', value: '9' },
+];
+
+const DIVISIONES = [
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+  { label: '4', value: '4' },
+  { label: '5', value: '5' },
+  { label: 'A', value: 'A' },
+  { label: 'B', value: 'B' },
+  { label: 'C', value: 'C' },
+  { label: 'D', value: 'D' },
+  { label: 'E', value: 'E' },
+];
+
+const TURNOS = [
+  { label: 'Mañana', value: 'Mañana' },
+  { label: 'Tarde', value: 'Tarde' },
+];
 export default function CargarDocenteScreen() {
   const router = useRouter();
   // Extraemos la señal para saber si estamos editando
@@ -165,10 +200,10 @@ export default function CargarDocenteScreen() {
               <Text style={styles.sectionLabel}>ASIGNACIÓN ACADÉMICA</Text>
             </View>
 
-            <SelectInput label="Materia que dicta" iconName="menu-book" placeholder="Seleccionar materia..." value={materia} options={MATERIAS} onChange={setMateria} />
-            <SelectInput label="Grado / Año asignado" iconName="school" placeholder="Seleccionar grado..." value={grado} options={GRADOS} onChange={setGrado} />
-            <SelectInput label="División" iconName="class" placeholder="Seleccionar división..." value={division} options={DIVISIONES} onChange={setDivision} />
-            <SelectInput label="Turno" iconName="schedule" placeholder="Seleccionar turno..." value={turno} options={TURNOS} onChange={setTurno} />
+            <SelectInput label="Materia que dicta" iconName="menu-book" placeholder="Seleccionar materia..." value={materia} options={MATERIAS} onChange={(value) => setMateria(String(value))} />
+            <SelectInput label="Grado / Año asignado" iconName="school" placeholder="Seleccionar grado..." value={grado} options={GRADOS} onChange={(value) => setGrado(String(value))} />
+            <SelectInput label="División" iconName="class" placeholder="Seleccionar división..." value={division} options={DIVISIONES} onChange={(value) => setDivision(String(value))} />
+            <SelectInput label="Turno" iconName="schedule" placeholder="Seleccionar turno..." value={turno} options={TURNOS} onChange={(value) => setTurno(String(value))} />
           </View>
           <View style={styles.actions}>
             <ValidationCard errors={erroresFormulario} />
