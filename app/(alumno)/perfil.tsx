@@ -9,7 +9,7 @@ export default function PerfilAlumnoScreen() {
   const router = useRouter();
 
   const handleLogout = () => {
-    router.replace('/');
+    router.replace('/login');
   };
 
   const metricas: ProfileMetric[] = [

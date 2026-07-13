@@ -17,10 +17,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ValidationCard from '@/components/molecules/ValidationCard';
 
-const AÑOS = ['1°', '2°', '3°', '4°', '5°', '6°'];
-const DIVISIONES = ['A', 'B', 'C', 'D', 'E'];
-const TURNOS = ['Mañana', 'Tarde', 'Noche'];
+const GRADOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const DIVISIONES = ['1', '2', '3', '4', '5', 'A', 'B', 'C', 'D', 'E'];
+const TURNOS = ['Mañana', 'Tarde'];
 const DOCENTES = [
   'María González',
   'Carlos Rodríguez',
@@ -32,14 +33,25 @@ const DOCENTES = [
 export default function CargarCursoScreen() {
   const router = useRouter();
 
-  const [anio, setAnio] = useState('');
+  const [grado, setGrado] = useState('');
   const [division, setDivision] = useState('');
   const [turno, setTurno] = useState('');
-  const [docente, setDocente] = useState('');
   const [capacidad, setCapacidad] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Lógica de validación dinámica
+  const obtenerErrores = () => {
+    const errs: string[] = [];
+    if (!grado || !division || !turno || !capacidad.trim()) {
+      errs.push('Faltan completar campos obligatorios');
+    }
+    return errs;
+  };
+
+  const erroresFormulario = obtenerErrores();
+
   const handleGuardar = () => {
+    if (erroresFormulario.length > 0) return;
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -76,16 +88,16 @@ export default function CargarCursoScreen() {
 
           <View style={styles.form}>
             <SelectInput
-              label="Año"
+              label="Grado / Año"
               iconName="school"
-              placeholder="Seleccionar año..."
-              value={anio}
-              options={AÑOS}
-              onChange={setAnio}
+              placeholder="Seleccionar grado..."
+              value={grado}
+              options={GRADOS}
+              onChange={setGrado}
             />
             <SelectInput
               label="División"
-              iconName="label-outline"
+              iconName="class"
               placeholder="Seleccionar división..."
               value={division}
               options={DIVISIONES}
@@ -99,14 +111,7 @@ export default function CargarCursoScreen() {
               options={TURNOS}
               onChange={setTurno}
             />
-            <SelectInput
-              label="Docente a cargo"
-              iconName="person-outline"
-              placeholder="Seleccionar docente..."
-              value={docente}
-              options={DOCENTES}
-              onChange={setDocente}
-            />
+
             <FormField label="Capacidad máxima de alumnos">
               <Input
                 iconName="groups"
@@ -117,7 +122,6 @@ export default function CargarCursoScreen() {
               />
             </FormField>
           </View>
-
           <View style={styles.hintsRow}>
             <View style={[styles.hintCard, styles.hintBlue]}>
               <MaterialIcons name="info-outline" size={18} color={Colors.primary} />
@@ -134,6 +138,7 @@ export default function CargarCursoScreen() {
           </View>
 
           <View style={styles.actions}>
+            <ValidationCard errors={erroresFormulario} />
             <PrimaryButton
               title="Guardar Curso"
               onPress={handleGuardar}

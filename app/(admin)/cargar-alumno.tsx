@@ -5,8 +5,10 @@ import { PrimaryButton } from '@/components/atoms/PrimaryButton';
 import SelectInput from '@/components/atoms/SelectInput';
 import { Colors } from '@/constants/Colors';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
+import ValidationCard from '@/components/molecules/ValidationCard';
+import { esNombreValido, esDniValido, esTelefonoValido, esFormatoFechaValido, esEdadAlumnoValida } from '@/utils/validations';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -18,31 +20,60 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const CURSOS = [
-  '1° A - Mañana',
-  '1° B - Tarde',
-  '2° A - Mañana',
-  '2° B - Tarde',
-  '3° A - Mañana',
-  '3° B - Noche',
-  '4° A - Mañana',
-  '5° A - Tarde',
-  '6° A - Noche',
-];
+const GRADOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const DIVISIONES = ['1', '2', '3', '4', '5', 'A', 'B', 'C', 'D', 'E'];
+const TURNOS = ['Mañana', 'Tarde'];
 
 export default function CargarAlumnoScreen() {
   const router = useRouter();
-
+  const { edit } = useLocalSearchParams<{ edit?: string }>();
+  const isEditing = edit === 'true';
+  // Alumno
+  const [apellido, setApellido] = useState('');
   const [nombre, setNombre] = useState('');
   const [dni, setDni] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
-  const [curso, setCurso] = useState('');
-  const [email, setEmail] = useState('');
+
+  // Escuela
+  const [grado, setGrado] = useState('');
+  const [division, setDivision] = useState('');
+  const [turno, setTurno] = useState('');
+
+  // Tutor
+  const [apellidoTutor, setApellidoTutor] = useState('');
   const [nombreTutor, setNombreTutor] = useState('');
   const [telefonoContacto, setTelefonoContacto] = useState('');
+
   const [isLoading, setIsLoading] = useState(false);
 
+  // Lógica de validación dinámica (Para el recuadro final)
+  // Lógica de validación dinámica estricta
+  // Lógica de validación dinámica detallada
+  const obtenerErrores = () => {
+    const errs: string[] = [];
+
+    if (!apellido || !nombre || !dni || !fechaNacimiento.trim() || !grado || !division || !turno || !apellidoTutor || !nombreTutor || !telefonoContacto) {
+      errs.push('Faltan completar campos obligatorios');
+    }
+
+    if (apellido && !esNombreValido(apellido)) errs.push('El apellido del alumno solo puede contener letras');
+    if (nombre && !esNombreValido(nombre)) errs.push('El nombre del alumno solo puede contener letras');
+    if (dni && !esDniValido(dni)) errs.push('El DNI debe tener entre 7 y 8 números');
+    if (fechaNacimiento && !esFormatoFechaValido(fechaNacimiento)) {
+      errs.push('La fecha debe tener formato DD/MM/YYYY (Ej: 15/04/2010)');
+    } else if (fechaNacimiento && !esEdadAlumnoValida(fechaNacimiento)) {
+      errs.push('El alumno debe tener entre 5 y 20 años');
+    }
+    if (apellidoTutor && !esNombreValido(apellidoTutor)) errs.push('El apellido del tutor solo puede contener letras');
+    if (nombreTutor && !esNombreValido(nombreTutor)) errs.push('El nombre del tutor solo puede contener letras');
+    if (telefonoContacto && !esTelefonoValido(telefonoContacto)) errs.push('El teléfono tiene un formato inválido');
+
+    return errs;
+  };
+
+  const erroresFormulario = obtenerErrores();
   const handleGuardar = () => {
+    if (erroresFormulario.length > 0) return;
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -56,7 +87,9 @@ export default function CargarAlumnoScreen() {
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()} activeOpacity={0.7}>
           <MaterialIcons name="arrow-back" size={24} color={Colors.neutral} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Cargar Alumno</Text>
+        <Text style={styles.headerTitle}>
+          {isEditing ? 'Editar Alumno' : 'Cargar Alumno'}
+        </Text>
         <View style={styles.avatarSmall}>
           <MaterialIcons name="person" size={18} color={Colors.onPrimary} />
         </View>
@@ -77,102 +110,49 @@ export default function CargarAlumnoScreen() {
           </Text>
 
           <View style={styles.form}>
-            <FormField label="Nombre completo">
-              <Input
-                iconName="person-outline"
-                placeholder="Ej: Lucas Pérez"
-                value={nombre}
-                onChangeText={setNombre}
-                autoCapitalize="words"
-              />
+            <FormField label="Apellido del alumno">
+              <Input iconName="person-outline" placeholder="Ej: Pérez" value={apellido} onChangeText={setApellido} autoCapitalize="words" />
+            </FormField>
+
+            <FormField label="Nombre del alumno">
+              <Input iconName="person-outline" placeholder="Ej: Lucas" value={nombre} onChangeText={setNombre} autoCapitalize="words" />
             </FormField>
 
             <FormField label="DNI">
-              <Input
-                iconName="badge"
-                placeholder="Ej: 45123456"
-                value={dni}
-                onChangeText={setDni}
-                keyboardType="numeric"
-              />
+              <Input iconName="badge" placeholder="Ej: 45123456" value={dni} onChangeText={setDni} keyboardType="numeric" />
             </FormField>
 
             <FormField label="Fecha de nacimiento">
-              <Input
-                iconName="calendar-today"
-                placeholder="dd/mm/yyyy"
-                value={fechaNacimiento}
-                onChangeText={setFechaNacimiento}
-                keyboardType="numeric"
-              />
+              <Input iconName="calendar-today" placeholder="dd/mm/yyyy" value={fechaNacimiento} onChangeText={setFechaNacimiento} keyboardType="numeric" />
             </FormField>
 
-
-            <SelectInput
-              label="Curso / División"
-              iconName="school"
-              placeholder="Seleccionar curso..."
-              value={curso}
-              options={CURSOS}
-              onChange={setCurso}
-            />
-
-            <FormField label="Email institucional">
-              <Input
-                iconName="mail-outline"
-                placeholder="alumno@escuela.edu.ar"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </FormField>
+            {/* Nuevos Selectores Separados */}
+            <SelectInput label="Grado / Año" iconName="school" placeholder="Seleccionar grado..." value={grado} options={GRADOS} onChange={setGrado} />
+            <SelectInput label="División" iconName="class" placeholder="Seleccionar división..." value={division} options={DIVISIONES} onChange={setDivision} />
+            <SelectInput label="Turno" iconName="schedule" placeholder="Seleccionar turno..." value={turno} options={TURNOS} onChange={setTurno} />
           </View>
-
           <View style={styles.tutorSection}>
             <Text style={styles.tutorSectionTitle}>Información del Tutor</Text>
           </View>
 
           <View style={styles.form}>
+            <FormField label="Apellido del tutor/padre">
+              <Input iconName="person-outline" placeholder="Ej: Pérez" value={apellidoTutor} onChangeText={setApellidoTutor} autoCapitalize="words" />
+            </FormField>
+
             <FormField label="Nombre del tutor/padre">
-              <Input
-                iconName="person-outline"
-                placeholder="Ej: Roberto Pérez"
-                value={nombreTutor}
-                onChangeText={setNombreTutor}
-                autoCapitalize="words"
-              />
+              <Input iconName="person-outline" placeholder="Ej: Roberto" value={nombreTutor} onChangeText={setNombreTutor} autoCapitalize="words" />
             </FormField>
 
             <FormField label="Teléfono de contacto">
-              <Input
-                iconName="phone"
-                placeholder="Ej: +54 9 11 1234-5678"
-                value={telefonoContacto}
-                onChangeText={setTelefonoContacto}
-                keyboardType="phone-pad"
-              />
+              <Input iconName="phone" placeholder="Ej: +54 9 11 1234-5678" value={telefonoContacto} onChangeText={setTelefonoContacto} keyboardType="phone-pad" />
             </FormField>
           </View>
 
-          <View style={styles.altaCard}>
-            <View style={styles.altaCardContent}>
-              <Text style={styles.altaCardTitle}>Alta Automática</Text>
-              <Text style={styles.altaCardDescription}>
-                El alumno tendrá acceso al portal una vez guardado.
-              </Text>
-            </View>
-            <MaterialIcons name="verified-user" size={32} color={`${Colors.primary}60`} />
-          </View>
-
-          <View style={styles.dniCard}>
-            <MaterialIcons name="info" size={24} color={Colors.error} />
-            <Text style={styles.dniCardText}>DNI Verificado</Text>
-          </View>
-
+          <ValidationCard errors={erroresFormulario} />
           <View style={styles.actions}>
             <PrimaryButton
-              title="Guardar Alumno"
+              title={isEditing ? 'Guardar Cambios' : 'Guardar Alumno'}
               onPress={handleGuardar}
               isLoading={isLoading}
               style={styles.primaryBtn}
@@ -300,5 +280,11 @@ const styles = StyleSheet.create({
   },
   outlinedBtn: {
     borderRadius: 24,
+  },
+  formValido: {
+    backgroundColor: '#E8F5E9',
+  },
+  formInvalido: {
+    backgroundColor: `${Colors.error}10`,
   },
 });
