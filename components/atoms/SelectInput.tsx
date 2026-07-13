@@ -14,9 +14,14 @@ interface SelectInputProps {
   label: string;
   iconName: keyof typeof MaterialIcons.glyphMap;
   placeholder?: string;
-  value: string;
-  options: string[];
-  onChange: (value: string) => void;
+  options: SelectOption[];
+  value: number | string | null;
+  onChange: (value: number | string) => void;
+}
+
+export interface SelectOption {
+    label: string;
+    value: number | string;
 }
 
 export default function SelectInput({
@@ -29,11 +34,11 @@ export default function SelectInput({
 }: SelectInputProps) {
   const [open, setOpen] = useState(false);
 
-  const handleSelect = (option: string) => {
-    onChange(option);
-    setOpen(false);
-  };
-
+  const handleSelect = (option: SelectOption) => {
+  onChange(option.value);
+  setOpen(false);
+};
+const selectedOption = options.find(option => option.value === value);
   return (
     <View style={styles.container}>
       <View style={styles.labelContainer}>
@@ -52,8 +57,8 @@ export default function SelectInput({
           color={open ? Colors.primary : Colors.secondary}
           style={styles.leftIcon}
         />
-        <Text style={[styles.valueText, !value && styles.placeholder]}>
-          {value || placeholder}
+        <Text style={[styles.valueText, value == null && styles.placeholder]}>
+          {selectedOption?.label ?? placeholder}
         </Text>
         <MaterialIcons name="expand-more" size={22} color={Colors.secondary} />
       </TouchableOpacity>
@@ -65,23 +70,38 @@ export default function SelectInput({
             <Text style={styles.sheetTitle}>{label}</Text>
             <FlatList
               data={options}
-              keyExtractor={(item) => item}
+              keyExtractor={(item) => item.value.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.option, item === value && styles.optionSelected]}
-                  onPress={() => handleSelect(item)}
-                  activeOpacity={0.7}
-                >
-                  <Text style={[styles.optionText, item === value && styles.optionTextSelected]}>
-                    {item}
-                  </Text>
-                  {item === value && (
-                    <MaterialIcons name="check" size={18} color={Colors.primary} />
-                  )}
-                </TouchableOpacity>
+                  <TouchableOpacity
+                      style={[
+                          styles.option,
+                          item.value === value && styles.optionSelected,
+                      ]}
+                      onPress={() => handleSelect(item)}
+                      activeOpacity={0.7}
+                  >
+                      <Text
+                          style={[
+                              styles.optionText,
+                              item.value === value && styles.optionTextSelected,
+                          ]}
+                      >
+                          {item.label}
+                      </Text>
+
+                      {item.value === value && (
+                          <MaterialIcons
+                              name="check"
+                              size={18}
+                              color={Colors.primary}
+                          />
+                      )}
+                  </TouchableOpacity>
               )}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
-            />
+              ItemSeparatorComponent={() => (
+                  <View style={styles.separator} />
+              )}
+          />
           </View>
         </TouchableOpacity>
       </Modal>
