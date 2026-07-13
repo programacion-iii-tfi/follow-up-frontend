@@ -18,16 +18,33 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ValidationCard from '@/components/molecules/ValidationCard';
+import { API_BASE_URL } from '@/config/api';
+import { getSession } from '@/utils/session';
 
-const GRADOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const DIVISIONES = ['1', '2', '3', '4', '5', 'A', 'B', 'C', 'D', 'E'];
-const TURNOS = ['Mañana', 'Tarde'];
-const DOCENTES = [
-  'María González',
-  'Carlos Rodríguez',
-  'Laura Martínez',
-  'Jorge López',
-  'Ana Fernández',
+
+const GRADOS = [
+  { label: '1', value: '1' },
+  { label: '2', value: '2' },
+  { label: '3', value: '3' },
+  { label: '4', value: '4' },
+  { label: '5', value: '5' },
+  { label: '6', value: '6' },
+  { label: '7', value: '7' },
+  { label: '8', value: '8' },
+  { label: '9', value: '9' },
+];
+
+const DIVISIONES = [
+  { label: 'A', value: 'A' },
+  { label: 'B', value: 'B' },
+  { label: 'C', value: 'C' },
+  { label: 'D', value: 'D' },
+  { label: 'E', value: 'E' },
+];
+
+const TURNOS = [
+  { label: 'Mañana', value: 'Mañana' },
+  { label: 'Tarde', value: 'Tarde' },
 ];
 
 export default function CargarCursoScreen() {
@@ -50,13 +67,50 @@ export default function CargarCursoScreen() {
 
   const erroresFormulario = obtenerErrores();
 
-  const handleGuardar = () => {
-    if (erroresFormulario.length > 0) return;
-    setIsLoading(true);
-    setTimeout(() => {
+  const handleGuardar = async () => {
+  if (erroresFormulario.length > 0) return;
+
+  setIsLoading(true);
+
+  try {
+    const session = await getSession();
+
+    if (!session) {
+      throw new Error('No hay sesión iniciada');
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/cursoDivisionTurno`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.token}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          curso: grado,
+          division,
+          turno,
+          capacidad_maxima: Number(capacidad),
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message ?? 'No se pudo crear el curso');
+    }
+
+    router.back();
+
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : 'Ocurrió un error');
+    } finally {
       setIsLoading(false);
-      router.back();
-    }, 1500);
+    }
   };
 
   return (
@@ -93,23 +147,25 @@ export default function CargarCursoScreen() {
               placeholder="Seleccionar grado..."
               value={grado}
               options={GRADOS}
-              onChange={setGrado}
+              onChange={(value) => setGrado(String(value))}
             />
+
             <SelectInput
               label="División"
               iconName="class"
               placeholder="Seleccionar división..."
               value={division}
               options={DIVISIONES}
-              onChange={setDivision}
+              onChange={(value) => setDivision(String(value))}
             />
+
             <SelectInput
               label="Turno"
               iconName="schedule"
               placeholder="Seleccionar turno..."
               value={turno}
               options={TURNOS}
-              onChange={setTurno}
+              onChange={(value) => setTurno(String(value))}
             />
 
             <FormField label="Capacidad máxima de alumnos">
