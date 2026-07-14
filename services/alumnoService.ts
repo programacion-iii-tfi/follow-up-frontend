@@ -4,8 +4,7 @@ import {
     Tutor,
     CreateAlumnoRequest,
 } from '@/types/alumno';
-
-const BASE_URL = 'http://192.168.1.4:8000/api/v1';
+import { API_BASE_URL } from '@/config/api';
 
 async function getHeaders() {
     const session = await getSession();
@@ -27,7 +26,7 @@ async function getHeaders() {
 export async function getCursosDivisionTurno(): Promise<CursoDivisionTurno[]> {
 
     const response = await fetch(
-        `${BASE_URL}/cursoDivisionTurno`,
+        `${API_BASE_URL}/cursoDivisionTurno`,
         {
             headers: await getHeaders(),
         }
@@ -49,7 +48,7 @@ export async function buscarTutorPorDni(
 ): Promise<Tutor | null> {
 
     const response = await fetch(
-        `${BASE_URL}/tutores/dni/${dni}`,
+        `${API_BASE_URL}/tutores/dni/${dni}`,
         {
             headers: await getHeaders(),
         }
@@ -74,7 +73,7 @@ export async function crearAlumno(
 ): Promise<void> {
 
     const response = await fetch(
-        `${BASE_URL}/alumnos`,
+        `${API_BASE_URL}/alumnos`,
         {
             method: 'POST',
             headers: await getHeaders(),
