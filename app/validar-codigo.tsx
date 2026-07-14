@@ -7,9 +7,9 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { API_BASE_URL } from '@/config/api';
 
 // TODO: mover a variable de entorno (.env / app.config.ts) antes de producción.
-const API_BASE_URL = 'http://192.168.1.4:8000/api/v1';
 
 type AlumnoValidado = {
   id: string;
@@ -74,7 +74,7 @@ export default function ValidarCodigoScreen() {
     if (!alumno) return;
 
     router.push({
-      pathname: '/completar-registro-tutor', // TODO: ajustar al nombre real de la ruta
+      pathname: '/register',
       params: {
         codigoInstitucional: codigo.trim(),
         alumnoId: alumno.id,

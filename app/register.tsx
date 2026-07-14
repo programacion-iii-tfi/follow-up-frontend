@@ -8,9 +8,7 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { saveSession, Session, UserRole } from '@/utils/session';
-
-// TODO: mover a variable de entorno (.env / app.config.ts) antes de producción.
-const API_BASE_URL = 'http://192.168.1.4:8000/api/v1';
+import { API_BASE_URL } from '@/config/api';
 
 // Mismo mapeo que en login.tsx.
 const RUTA_POR_ROL: Record<string, string> = {
